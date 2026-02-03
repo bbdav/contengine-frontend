@@ -1,8 +1,10 @@
+import Sidebar from "../components/sidebar/Sidebar"
+
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex">
-      <aside className="w-64 border-r">Sidebar</aside>
-      <main className="flex-1 p-6">{children}</main>
+    <div className="flex">
+      <Sidebar />
+      <main className="flex-1 min-w-0">{children}</main>
     </div>
   )
 }
