@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "tokens:build": "node scripts/generate-tokens-css.mjs",
+    "predev": "npm run tokens:build",
+    "prebuild": "npm run tokens:build",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
