@@ -2,25 +2,17 @@ import { useMemo, useState } from "react"
 import {
   Calendar,
   Filter,
-  MoreHorizontal,
   Search,
-  ChevronRight,
   Columns3,
   Flag,
 } from "lucide-react"
 
-import { Button } from "../components/ui/button"
-import { Input } from "../components/ui/input"
-// import { Badge } from "../components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../components/ui/table"
-import { Checkbox } from "../components/ui/checkbox"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../components/ui/dropdown-menu"
-
+import { Button } from "@/components/base/buttons/button"
+import { Input } from "@/components/base/input/input"
+import { Table } from "@/components/application/table/table"
+import { Checkbox } from "@/components/base/checkbox/checkbox"
+import { Dropdown } from "@/components/base/dropdown/dropdown"
+import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
 
 type Row = {
@@ -166,152 +158,151 @@ export default function ArticlesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="px-8 pt-6">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="inline-flex items-center gap-2">
-            <span className="h-6 w-6 rounded-md border bg-card" />
-            Content Builder
-          </span>
-          <ChevronRight className="h-4 w-4" />
-          <span>Article</span>
+    <div className="min-h-screen bg-background-color-primary">
+      <div>  
+        <div className="border-b border-secondary px-6 py-3">
+                <Breadcrumbs type="button">
+          <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
+        </Breadcrumbs>
         </div>
 
-        <div className="mt-5 flex items-start justify-between gap-6">
+        <div className="px-6 mt-4 flex items-start justify-between gap-6">
           <div>
             <h1 className="text-3xl font-semibold tracking-tight">Article</h1>
-            <div className="mt-1 text-sm text-muted-foreground">7 entries found</div>
+            <div className="mt-1 text-sm text-tertiary">7 entries found</div>
           </div>
 
-          <Button className="rounded-xl px-5">Create new entry</Button>
+          <Button color="primary" size="sm">Create new entry</Button>
         </div>
 
         <div className="mt-5 flex items-center gap-3">
           <div className="relative w-[420px]">
-            <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-tertiary" />
             <Input
               className="pl-9 pr-16 rounded-xl"
               placeholder="Search for trades"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(value) => setQuery(value)}
             />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground border rounded-md px-2 py-1">
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-tertiary border rounded-md px-2 py-1">
               ⌘K
             </div>
           </div>
 
           <div className="flex-1" />
 
-          <Button variant="outline" className="rounded-xl gap-2">
+          <Button color="secondary" size="sm" className="rounded-xl gap-2">
             <Calendar className="h-4 w-4" />
             Jan 10, 2025 – Jan 16, 2025
           </Button>
 
-          <Button variant="outline" className="rounded-xl gap-2">
+          <Button color="secondary" size="sm" className="rounded-xl gap-2">
             <Filter className="h-4 w-4" />
             Filters
-            <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1.5 text-xs">
+            <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-secondary px-1.5 text-xs">
               3
             </span>
           </Button>
 
-          <Button variant="outline" size="icon" className="rounded-xl" aria-label="Columns">
+          <Button color="secondary" className="rounded-xl h-9 w-9 p-0" aria-label="Columns">
             <Columns3 className="h-4 w-4" />
           </Button>
 
-          <Button variant="outline" size="icon" className="rounded-xl" aria-label="Locale">
+          <Button color="secondary" className="rounded-xl h-9 w-9 p-0" aria-label="Locale">
             <Flag className="h-4 w-4" />
           </Button>
         </div>
 
-        <div className="mt-4 rounded-2xl border bg-card overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/30">
-                <TableHead className="w-[48px]">
+        <div className="mt-4 overflow-hidden rounded-2xl bg-primary shadow-xs ring-1 ring-secondary">
+          <Table aria-label="Articles">
+            <Table.Header>
+              <Table.Row className="bg-secondary">
+                <Table.Head className="w-[48px]">
                   <Checkbox
-                    checked={allChecked ? true : someChecked ? "indeterminate" : false}
-                    onCheckedChange={() => toggleAll()}
+                    isSelected={allChecked}
+                    isIndeterminate={someChecked}
+                    onChange={toggleAll}
                     aria-label="Select all"
                   />
-                </TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead className="w-[120px]">Author</TableHead>
-                <TableHead className="w-[260px]">Slug</TableHead>
-                <TableHead className="w-[160px]">Last update</TableHead>
-                <TableHead className="w-[180px]">Status</TableHead>
-                <TableHead className="w-[56px]" />
-              </TableRow>
-            </TableHeader>
+                </Table.Head>
+                <Table.Head>Title</Table.Head>
+                <Table.Head className="w-[120px]">Author</Table.Head>
+                <Table.Head className="w-[260px]">Slug</Table.Head>
+                <Table.Head className="w-[160px]">Last update</Table.Head>
+                <Table.Head className="w-[180px]">Status</Table.Head>
+                <Table.Head className="w-[56px]" />
+              </Table.Row>
+            </Table.Header>
 
-            <TableBody>
+            <Table.Body>
               {filtered.map((r) => {
                 const isChecked = !!selected[r.id]
                 return (
-                  <TableRow key={r.id} className={isChecked ? "bg-muted/20" : undefined}>
-                    <TableCell>
+                  <Table.Row key={r.id} className={isChecked ? "bg-primary_hover" : undefined}>
+                    <Table.Cell>
                       <Checkbox
-                        checked={isChecked}
-                        onCheckedChange={(v) => toggleOne(r.id, !!v)}
+                        isSelected={isChecked}
+                        onChange={(v) => toggleOne(r.id, v)}
                         aria-label="Select row"
                       />
-                    </TableCell>
+                    </Table.Cell>
 
-                    <TableCell>
+                    <Table.Cell>
                       <div className="font-medium">{r.title}</div>
-                      <div className="text-sm text-muted-foreground line-clamp-1">{r.desc}</div>
-                    </TableCell>
+                      <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
+                    </Table.Cell>
 
-                    <TableCell>
+                    <Table.Cell>
                       <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold">
+                        <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-xs font-semibold">
                           {r.author}
                         </div>
                       </div>
-                    </TableCell>
+                    </Table.Cell>
 
-                    <TableCell className="text-muted-foreground">{r.slug}</TableCell>
-                    <TableCell className="text-muted-foreground">{r.updated}</TableCell>
+                    <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
+                    <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
 
-                    <TableCell>
+                    <Table.Cell>
                       <StatusPill status={r.status} />
-                    </TableCell>
+                    </Table.Cell>
 
-                    <TableCell className="text-right">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="rounded-xl" aria-label="Row actions">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
+                    <Table.Cell className="text-right">
+                      <Dropdown.Root>
+                        <Dropdown.DotsButton aria-label="Row actions" />
+
+                        <Dropdown.Popover className="w-min">
+                          <Dropdown.Menu>
+                            <Dropdown.Item label="Edit">Edit</Dropdown.Item>
+                            <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
+                            <Dropdown.Item label="Delete">Delete</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown.Popover>
+                      </Dropdown.Root>
+                    </Table.Cell>
+                  </Table.Row>
                 )
               })}
-            </TableBody>
+            </Table.Body>
           </Table>
         </div>
 
         <div className="mt-6 flex items-center justify-between pb-10">
-          <div className="inline-flex rounded-xl border overflow-hidden bg-card">
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">←</button>
-            <button className="px-3 py-2 text-sm bg-muted/40">1</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">2</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">3</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">…</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">8</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">9</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">10</button>
-            <button className="px-3 py-2 text-sm text-muted-foreground hover:bg-muted/40">→</button>
+          <div className="inline-flex rounded-xl border overflow-hidden bg-primary">
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">←</button>
+            <button className="px-3 py-2 text-sm bg-primary_hover">1</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">2</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">3</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">…</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">8</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">9</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">10</button>
+            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">→</button>
           </div>
 
-          <Button variant="ghost" className="text-muted-foreground">
+          <Button color="tertiary" className="text-tertiary">
             View 25
           </Button>
         </div>

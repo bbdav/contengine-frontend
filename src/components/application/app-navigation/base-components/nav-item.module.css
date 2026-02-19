@@ -1,0 +1,16 @@
+.root {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.root:hover {
+  background: var(--gray-50);
+}
+
+.rootSelected {
+  background: var(--gray-50);
+}

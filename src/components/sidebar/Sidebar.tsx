@@ -1,252 +1,217 @@
-import { useMemo, useState } from "react"
+// src/components/sidebar/Sidebar.tsx
+import { useState } from 'react';
 import {
-  Home,
-  LayoutGrid,
-  PenTool,
-  Image as ImageIcon,
-  Users,
-  Code2,
-  Clock,
-  Settings,
-  ChevronDown,
-  ChevronRight,
+  HomeLine,
+  LifeBuoy01,
+  Settings01,
   Plus,
-  Search,
-  PanelLeft,
-} from "lucide-react"
+  ChevronDown,
+  SearchLg,
+  LayoutLeft,
+} from '@untitledui/icons';
 
-import { cn } from "../../lib/utils"
-import { Button } from "../ui/button"
-import { Badge } from "../ui/badge"
-import { Separator } from "../ui/separator"
-import { ScrollArea } from "../ui/scroll-area"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip"
-import { Avatar, AvatarFallback } from "../ui/avatar"
-import { Input } from "../ui/input"
-
-type NavItem = {
-  id: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  count?: number
-}
-
-type NavSection = {
-  title: string
-  items: NavItem[]
-  defaultOpen?: boolean
-}
-
-function RailButton({
-  icon: Icon,
-  active,
-  label,
-}: {
-  icon: React.ComponentType<{ className?: string }>
-  active?: boolean
-  label: string
-}) {
-  return (
-    <TooltipProvider delayDuration={150}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            className={cn(
-              "h-10 w-10 rounded-lg flex items-center justify-center transition",
-              active
-                ? "bg-muted text-foreground"
-                : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-            )}
-            aria-label={label}
-            type="button"
-          >
-            <Icon className="h-5 w-5" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent side="right">{label}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  )
-}
-
-function Section({
-  section,
-  activeId,
-  onSelect,
-}: {
-  section: NavSection
-  activeId: string
-  onSelect: (id: string) => void
-}) {
-  const [open, setOpen] = useState(section.defaultOpen ?? true)
-
-  return (
-    <div className="space-y-2">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between text-xs text-muted-foreground px-2 py-1"
-      >
-        <span className="font-medium">{section.title}</span>
-        {open ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-      </button>
-
-      {open && (
-        <div className="space-y-1">
-          {section.items.map((item) => {
-            const active = item.id === activeId
-            return (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => onSelect(item.id)}
-                className={cn(
-                  "w-full flex items-center gap-2 rounded-md px-2 py-2 text-sm transition",
-                  active
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                )}
-              >
-                <span className="flex h-6 w-6 items-center justify-center">
-                  <item.icon className="h-4 w-4" />
-                </span>
-                <span className="flex-1 text-left">{item.label}</span>
-                {typeof item.count === "number" && (
-                  <Badge variant="secondary" className="rounded-md px-2">
-                    {item.count}
-                  </Badge>
-                )}
-              </button>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
+const CompanyLogo = () => (
+  <div className="flex items-center justify-center">
+    <svg
+      width="34"
+      height="34"
+      viewBox="0 0 34 34"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* Paste your full SVG code here – same as in your original file */}
+      <g filter="url(#filter0_dd_907_5058)">
+        <g clipPath="url(#clip0_907_5058)">
+          <path
+            d="M3 16C3 12.2774 3 10.4162 3.48943 8.90983C4.47861 5.86545 6.86545 3.47861 9.90983 2.48943C11.4162 2 13.2774 2 17 2C20.7226 2 22.5838 2 24.0902 2.48943C27.1346 3.47861 29.5214 5.86545 30.5106 8.90983C31 10.4162 31 12.2774 31 16C31 19.7226 31 21.5838 30.5106 23.0902C29.5214 26.1346 27.1346 28.5214 24.0902 29.5106C22.5838 30 20.7226 30 17 30C13.2774 30 11.4162 30 9.90983 29.5106C6.86545 28.5214 4.47861 26.1346 3.48943 23.0902C3 21.5838 3 19.7226 3 16Z"
+            fill="#0A0D12"
+          />
+          <rect width="28" height="28" transform="translate(3 2)" fill="url(#paint0_linear_907_5058)" />
+          {/* ... rest of your paths ... */}
+        </g>
+        {/* ... defs, filter, gradients, clipPath ... */}
+      </g>
+    </svg>
+  </div>
+);
 
 export default function Sidebar() {
-  const sections = useMemo<NavSection[]>(
-    () => [
-      {
-        title: "Collections (content list)",
-        defaultOpen: true,
-        items: [
-          { id: "articles", label: "Articles", icon: PenTool, count: 9 },
-          { id: "authors", label: "Authors", icon: Users, count: 7 },
-          { id: "categories", label: "Categories", icon: LayoutGrid, count: 23 },
-          { id: "products", label: "Products", icon: Home, count: 21 },
-        ],
-      },
-      {
-        title: "Singletons",
-        defaultOpen: true,
-        items: [
-          { id: "homepage", label: "Homepage", icon: Home },
-          { id: "about", label: "About Page", icon: LayoutGrid },
-          { id: "privacy", label: "Privacy Policy", icon: Code2 },
-          { id: "terms", label: "Terms & Conditions", icon: Code2 },
-        ],
-      },
-      {
-        title: "Blocks",
-        defaultOpen: true,
-        items: [
-          { id: "hero", label: "Hero Section", icon: ImageIcon },
-          { id: "testimonial", label: "Testimonial Block", icon: ImageIcon },
-          { id: "gallery", label: "Gallery Block", icon: ImageIcon },
-          { id: "faq", label: "FAQ Block", icon: ImageIcon },
-        ],
-      },
-    ],
-    []
-  )
-
-  const [activeId, setActiveId] = useState("articles")
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [openCollections, setOpenCollections] = useState(true);
+  const [openSingletons, setOpenSingletons] = useState(true);
+  const [openBlocks, setOpenBlocks] = useState(true);
 
   return (
-    <aside className="h-screen w-[320px] shrink-0 border-r bg-background flex">
-      {/* Icon rail */}
-      <div className="w-14 border-r flex flex-col items-center py-3 gap-2">
-        <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
-          <span className="text-sm font-semibold">C</span>
+    <aside className="flex h-screen shrink-0 border-r border-gray-800 bg-gray-950 text-gray-200">
+      {/* Slim icon-only sidebar */}
+      <div className="group relative flex w-16 flex-col border-r border-gray-800 bg-gray-950">
+        {/* Logo / expand trigger */}
+        <div className="relative h-16 flex items-center justify-center">
+          <div className={isCollapsed ? 'group-hover:opacity-0 transition-opacity' : 'opacity-100'}>
+            <CompanyLogo />
+          </div>
+
+          {isCollapsed && (
+            <button
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              onClick={() => setIsCollapsed(false)}
+              aria-label="Expand sidebar"
+            >
+              <LayoutLeft className="h-5 w-5 text-gray-400" />
+            </button>
+          )}
         </div>
 
-        <div className="mt-2 flex flex-col gap-2">
-          <RailButton icon={Home} label="Home" />
-          <RailButton icon={LayoutGrid} label="Content" active />
-          <RailButton icon={PenTool} label="Editor" />
-          <RailButton icon={ImageIcon} label="Assets" />
-          <RailButton icon={Users} label="Users" />
-          <RailButton icon={Code2} label="API" />
-          <RailButton icon={Clock} label="Activity" />
+        {/* Main icons (only Content for now) */}
+        <div className="flex flex-1 flex-col items-center gap-2 py-4">
+          <button
+            className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400"
+            aria-label="Content"
+          >
+            <HomeLine className="h-5 w-5" />
+          </button>
         </div>
 
-        <div className="mt-auto flex flex-col gap-2 pb-2">
-          <RailButton icon={Settings} label="Settings" />
+        {/* Footer icons */}
+        <div className="flex flex-col items-center gap-2 pb-4">
+          <button className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors">
+            <LifeBuoy01 className="h-5 w-5" />
+          </button>
+          <button className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors">
+            <Settings01 className="h-5 w-5" />
+          </button>
         </div>
       </div>
 
-      {/* Main sidebar panel */}
-      <div className="flex-1 flex flex-col">
-        <div className="h-14 px-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-base font-semibold">Content Builder</span>
-          </div>
-          <Button variant="ghost" size="icon" aria-label="Collapse sidebar">
-            <PanelLeft className="h-5 w-5" />
-          </Button>
+      {/* Expanded panel */}
+      <div
+        className={`flex flex-col border-r border-gray-800 bg-gray-950 transition-all duration-200 ${
+          isCollapsed ? 'w-0 overflow-hidden' : 'w-72'
+        }`}
+      >
+        {/* Header */}
+        <div className="flex h-14 items-center justify-between border-b border-gray-800 px-4">
+          <span className="text-base font-semibold text-white">Content</span>
+          <button
+            className="flex h-8 w-8 items-center justify-center rounded-md text-gray-400 hover:bg-gray-800"
+            onClick={() => setIsCollapsed(true)}
+            aria-label="Collapse sidebar"
+          >
+            <LayoutLeft className="h-5 w-5 rotate-180" />
+          </button>
         </div>
 
-        <div className="px-3 pb-3">
+        {/* Search */}
+        <div className="p-4">
           <div className="relative">
-            <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input className="pl-9 pr-14" placeholder="Search" />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground border rounded-md px-2 py-1">
+            <SearchLg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <input
+              placeholder="Search"
+              className="h-9 w-full rounded-lg border border-gray-700 bg-gray-900 pl-9 pr-20 text-sm placeholder-gray-500 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600/30"
+            />
+            <div className="pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center rounded border border-gray-700 bg-gray-800 px-1.5 py-0.5 text-xs font-medium text-gray-400">
               ⌘K
             </div>
           </div>
         </div>
 
-        <Separator />
-
-        <ScrollArea className="flex-1">
-          <div className="p-3 space-y-6">
-            {sections.map((section) => (
-              <Section
-                key={section.title}
-                section={section}
-                activeId={activeId}
-                onSelect={setActiveId}
-              />
-            ))}
+        {/* Scrollable sections */}
+        <div className="flex-1 overflow-y-auto px-3 pb-4">
+          {/* Collections */}
+          <div className="mb-2">
+            <button
+              onClick={() => setOpenCollections(!openCollections)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800/50"
+            >
+              Collections
+              <ChevronDown className={`h-4 w-4 transition-transform ${openCollections ? 'rotate-180' : ''}`} />
+            </button>
+            {openCollections && (
+              <div className="mt-1 space-y-0.5">
+                <a
+                  href="#"
+                  className="flex items-center gap-2.5 rounded-lg bg-indigo-600/10 px-3 py-2 text-sm text-indigo-300"
+                >
+                  <span className="size-2 rounded-full bg-emerald-500" />
+                  Articles
+                  <span className="ml-auto rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">7</span>
+                </a>
+                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">
+                  Authors <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">9</span>
+                </a>
+                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">
+                  Categories <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">23</span>
+                </a>
+                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">
+                  Products <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">21</span>
+                </a>
+              </div>
+            )}
           </div>
-        </ScrollArea>
 
-        <div className="p-3">
-          <Button className="w-full justify-center gap-2">
+          {/* Singletons */}
+          <div className="mb-2">
+            <button
+              onClick={() => setOpenSingletons(!openSingletons)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800/50"
+            >
+              Singletons
+              <ChevronDown className={`h-4 w-4 transition-transform ${openSingletons ? 'rotate-180' : ''}`} />
+            </button>
+            {openSingletons && (
+              <div className="mt-1 space-y-0.5 pl-1">
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Homepage</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">About Page</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Privacy Policy</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Terms & Conditions</a>
+              </div>
+            )}
+          </div>
+
+          {/* Blocks */}
+          <div className="mb-4">
+            <button
+              onClick={() => setOpenBlocks(!openBlocks)}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800/50"
+            >
+              Blocks
+              <ChevronDown className={`h-4 w-4 transition-transform ${openBlocks ? 'rotate-180' : ''}`} />
+            </button>
+            {openBlocks && (
+              <div className="mt-1 space-y-0.5 pl-1">
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Hero Section</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Testimonial Block</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Gallery Block</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">FAQ Block</a>
+              </div>
+            )}
+          </div>
+
+          {/* + Add New */}
+          <button className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
             <Plus className="h-4 w-4" />
             Add New
-          </Button>
+          </button>
         </div>
 
-        <div className="p-3 pt-0">
-          <div className="rounded-xl border bg-card p-3 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar className="h-9 w-9">
-                <AvatarFallback>MD</AvatarFallback>
-              </Avatar>
-              <div className="leading-tight">
-                <div className="text-sm font-medium">Mohit Davidson</div>
-                <div className="text-xs text-muted-foreground">mohit@contengine.io</div>
-              </div>
+        {/* Account card */}
+        <div className="border-t border-gray-800 p-4">
+          <div className="flex items-center gap-3 rounded-lg bg-gray-900/70 px-3 py-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-medium text-white">
+              MD
             </div>
-            <Button variant="ghost" size="icon" aria-label="Account menu">
-              <ChevronDown className="h-4 w-4" />
-            </Button>
+            <div className="min-w-0">
+              <div className="truncate text-sm font-medium text-white">Mohit Davidson</div>
+              <div className="truncate text-xs text-gray-400">mohit@contengine.io</div>
+            </div>
+            <button className="ml-auto text-gray-400 hover:text-gray-200">
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
     </aside>
-  )
+  );
 }

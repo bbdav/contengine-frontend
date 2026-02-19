@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@import "./generated/tokens.css";
+@import "./untitled-theme.css";
+
 /*
   Design tokens are generated from:
     src/tokens/tokens-core.json
