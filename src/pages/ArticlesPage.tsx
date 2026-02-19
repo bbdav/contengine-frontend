@@ -221,6 +221,7 @@ export default function ArticlesPage() {
               <Table.Row className="bg-secondary">
                 <Table.Head className="w-[48px]">
                   <Checkbox
+                    slot="selection"
                     isSelected={allChecked}
                     isIndeterminate={someChecked}
                     onChange={toggleAll}
@@ -243,6 +244,7 @@ export default function ArticlesPage() {
                   <Table.Row key={r.id} className={isChecked ? "bg-primary_hover" : undefined}>
                     <Table.Cell>
                       <Checkbox
+                        slot="selection"
                         isSelected={isChecked}
                         onChange={(v) => toggleOne(r.id, v)}
                         aria-label="Select row"
