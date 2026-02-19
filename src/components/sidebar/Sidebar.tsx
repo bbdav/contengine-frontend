@@ -42,9 +42,9 @@ export default function Sidebar() {
   const [openBlocks, setOpenBlocks] = useState(true);
 
   return (
-    <aside className="flex h-screen shrink-0 border-r border-gray-800 bg-gray-950 text-gray-200">
+    <aside className="flex h-screen shrink-0 border-r border-secondary bg-primary text-secondary">
       {/* Slim icon-only sidebar */}
-      <div className="group relative flex w-16 flex-col border-r border-gray-800 bg-gray-950">
+      <div className="group relative flex w-16 flex-col border-r border-secondary bg-primary">
         {/* Logo / expand trigger */}
         <div className="relative h-16 flex items-center justify-center">
           <div className={isCollapsed ? 'group-hover:opacity-0 transition-opacity' : 'opacity-100'}>
@@ -53,31 +53,28 @@ export default function Sidebar() {
 
           {isCollapsed && (
             <button
-              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100"
               onClick={() => setIsCollapsed(false)}
               aria-label="Expand sidebar"
             >
-              <LayoutLeft className="h-5 w-5 text-gray-400" />
+              <LayoutLeft className="h-5 w-5 text-tertiary" />
             </button>
           )}
         </div>
 
         {/* Main icons (only Content for now) */}
         <div className="flex flex-1 flex-col items-center gap-2 py-4">
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600/20 text-indigo-400"
-            aria-label="Content"
-          >
+          <button className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-600" aria-label="Content">
             <HomeLine className="h-5 w-5" />
           </button>
         </div>
 
         {/* Footer icons */}
         <div className="flex flex-col items-center gap-2 pb-4">
-          <button className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors">
+          <button className="flex h-10 w-10 items-center justify-center rounded-lg text-tertiary transition-colors hover:bg-primary_hover hover:text-tertiary_hover">
             <LifeBuoy01 className="h-5 w-5" />
           </button>
-          <button className="flex h-10 w-10 items-center justify-center rounded-lg text-gray-400 hover:bg-gray-800 hover:text-gray-200 transition-colors">
+          <button className="flex h-10 w-10 items-center justify-center rounded-lg text-tertiary transition-colors hover:bg-primary_hover hover:text-tertiary_hover">
             <Settings01 className="h-5 w-5" />
           </button>
         </div>
@@ -85,15 +82,15 @@ export default function Sidebar() {
 
       {/* Expanded panel */}
       <div
-        className={`flex flex-col border-r border-gray-800 bg-gray-950 transition-all duration-200 ${
+        className={`flex flex-col border-r border-secondary bg-primary transition-all duration-200 ${
           isCollapsed ? 'w-0 overflow-hidden' : 'w-72'
         }`}
       >
         {/* Header */}
-        <div className="flex h-14 items-center justify-between border-b border-gray-800 px-4">
-          <span className="text-base font-semibold text-white">Content</span>
+        <div className="flex h-14 items-center justify-between border-b border-secondary px-4">
+          <span className="text-base font-semibold text-primary">Content</span>
           <button
-            className="flex h-8 w-8 items-center justify-center rounded-md text-gray-400 hover:bg-gray-800"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-tertiary hover:bg-primary_hover"
             onClick={() => setIsCollapsed(true)}
             aria-label="Collapse sidebar"
           >
@@ -104,12 +101,12 @@ export default function Sidebar() {
         {/* Search */}
         <div className="p-4">
           <div className="relative">
-            <SearchLg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <SearchLg className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-tertiary" />
             <input
               placeholder="Search"
-              className="h-9 w-full rounded-lg border border-gray-700 bg-gray-900 pl-9 pr-20 text-sm placeholder-gray-500 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600/30"
+              className="h-9 w-full rounded-lg border border-secondary bg-primary pl-9 pr-20 text-sm text-primary placeholder:text-placeholder outline-hidden focus:ring-2 focus:ring-brand"
             />
-            <div className="pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center rounded border border-gray-700 bg-gray-800 px-1.5 py-0.5 text-xs font-medium text-gray-400">
+            <div className="pointer-events-none absolute right-2 top-1/2 flex -translate-y-1/2 items-center rounded border border-secondary bg-primary px-1.5 py-0.5 text-xs font-medium text-tertiary">
               ⌘K
             </div>
           </div>
@@ -121,7 +118,7 @@ export default function Sidebar() {
           <div className="mb-2">
             <button
               onClick={() => setOpenCollections(!openCollections)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800/50"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-secondary hover:bg-primary_hover"
             >
               Collections
               <ChevronDown className={`h-4 w-4 transition-transform ${openCollections ? 'rotate-180' : ''}`} />
@@ -130,20 +127,20 @@ export default function Sidebar() {
               <div className="mt-1 space-y-0.5">
                 <a
                   href="#"
-                  className="flex items-center gap-2.5 rounded-lg bg-indigo-600/10 px-3 py-2 text-sm text-indigo-300"
+                  className="flex items-center gap-2.5 rounded-lg bg-active px-3 py-2 text-sm text-secondary"
                 >
                   <span className="size-2 rounded-full bg-emerald-500" />
                   Articles
-                  <span className="ml-auto rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">7</span>
+                  <span className="ml-auto rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-tertiary">7</span>
                 </a>
-                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">
-                  Authors <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">9</span>
+                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">
+                  Authors <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-tertiary">9</span>
                 </a>
-                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">
-                  Categories <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">23</span>
+                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">
+                  Categories <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-tertiary">23</span>
                 </a>
-                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">
-                  Products <span className="rounded-full bg-gray-800 px-2 py-0.5 text-xs font-medium text-gray-300">21</span>
+                <a href="#" className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">
+                  Products <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-tertiary">21</span>
                 </a>
               </div>
             )}
@@ -153,17 +150,17 @@ export default function Sidebar() {
           <div className="mb-2">
             <button
               onClick={() => setOpenSingletons(!openSingletons)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800/50"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-secondary hover:bg-primary_hover"
             >
               Singletons
               <ChevronDown className={`h-4 w-4 transition-transform ${openSingletons ? 'rotate-180' : ''}`} />
             </button>
             {openSingletons && (
               <div className="mt-1 space-y-0.5 pl-1">
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Homepage</a>
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">About Page</a>
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Privacy Policy</a>
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Terms & Conditions</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">Homepage</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">About Page</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">Privacy Policy</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">Terms & Conditions</a>
               </div>
             )}
           </div>
@@ -172,39 +169,39 @@ export default function Sidebar() {
           <div className="mb-4">
             <button
               onClick={() => setOpenBlocks(!openBlocks)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-800/50"
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-secondary hover:bg-primary_hover"
             >
               Blocks
               <ChevronDown className={`h-4 w-4 transition-transform ${openBlocks ? 'rotate-180' : ''}`} />
             </button>
             {openBlocks && (
               <div className="mt-1 space-y-0.5 pl-1">
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Hero Section</a>
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Testimonial Block</a>
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">Gallery Block</a>
-                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-gray-400 hover:bg-gray-800/50">FAQ Block</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">Hero Section</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">Testimonial Block</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">Gallery Block</a>
+                <a href="#" className="block rounded-lg px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">FAQ Block</a>
               </div>
             )}
           </div>
 
           {/* + Add New */}
-          <button className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
+          <button className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand-solid px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-solid_hover">
             <Plus className="h-4 w-4" />
             Add New
           </button>
         </div>
 
         {/* Account card */}
-        <div className="border-t border-gray-800 p-4">
-          <div className="flex items-center gap-3 rounded-lg bg-gray-900/70 px-3 py-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-medium text-white">
+        <div className="border-t border-secondary p-4">
+          <div className="flex items-center gap-3 rounded-lg bg-secondary_subtle px-3 py-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-solid text-sm font-medium text-white">
               MD
             </div>
             <div className="min-w-0">
-              <div className="truncate text-sm font-medium text-white">Mohit Davidson</div>
-              <div className="truncate text-xs text-gray-400">mohit@contengine.io</div>
+              <div className="truncate text-sm font-medium text-primary">Mohit Davidson</div>
+              <div className="truncate text-xs text-tertiary">mohit@contengine.io</div>
             </div>
-            <button className="ml-auto text-gray-400 hover:text-gray-200">
+            <button className="ml-auto text-tertiary hover:text-tertiary_hover">
               <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
