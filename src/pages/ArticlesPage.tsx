@@ -1,18 +1,11 @@
 import { useMemo, useState } from "react"
-import {
-  Calendar,
-  Filter,
-  Search,
-  Columns3,
-  Flag,
-} from "lucide-react"
+import { Calendar, Columns3, Filter, Flag, Search } from "lucide-react"
 
-import { Button } from "@/components/base/buttons/button"
-import { Input } from "@/components/base/input/input"
-import { Table } from "@/components/application/table/table"
-import { Checkbox } from "@/components/base/checkbox/checkbox"
-import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
+import { Table } from "@/components/application/table/table"
+import { Button } from "@/components/base/buttons/button"
+import { Dropdown } from "@/components/base/dropdown/dropdown"
+import { Input } from "@/components/base/input/input"
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
 
 type Row = {
@@ -58,7 +51,7 @@ function StatusPill({ status }: { status: Status }) {
 
 export default function ArticlesPage() {
   const [query, setQuery] = useState("")
-  const [selected, setSelected] = useState<Record<string, boolean>>({ "3": true })
+  const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
 
   const rows = useMemo<Row[]>(
     () => [
@@ -135,27 +128,8 @@ export default function ArticlesPage() {
     return rows.filter((r) => (r.title + " " + r.slug).toLowerCase().includes(q))
   }, [rows, query])
 
-  const allChecked = filtered.length > 0 && filtered.every((r) => selected[r.id])
-  const someChecked = filtered.some((r) => selected[r.id]) && !allChecked
-
-  function toggleAll() {
-    if (allChecked) {
-      const next = { ...selected }
-      filtered.forEach((r) => delete next[r.id])
-      setSelected(next)
-      return
-    }
-    const next = { ...selected }
-    filtered.forEach((r) => (next[r.id] = true))
-    setSelected(next)
-  }
-
-  function toggleOne(id: string, value: boolean) {
-    const next = { ...selected }
-    if (value) next[id] = true
-    else delete next[id]
-    setSelected(next)
-  }
+  // Table selection is handled by react-aria-components.
+  // We keep `selectedKeys` controlled so we can read/use it later.
 
   return (
     <div className="min-h-screen bg-background-color-primary">
@@ -216,77 +190,66 @@ export default function ArticlesPage() {
         </div>
 
         <div className="mt-4 overflow-hidden rounded-2xl bg-primary shadow-xs ring-1 ring-secondary">
-          <Table aria-label="Articles">
+          <Table
+            aria-label="Articles"
+            selectionMode="multiple"
+            selectedKeys={selectedKeys}
+            onSelectionChange={(keys) => {
+              // react-aria can pass "all" or a Set.
+              if (keys === "all") {
+                setSelectedKeys(new Set(filtered.map((r) => r.id)))
+              } else {
+                setSelectedKeys(new Set(Array.from(keys as Set<string>).map(String)))
+              }
+            }}
+          >
             <Table.Header>
-              <Table.Row className="bg-secondary">
-                <Table.Head className="w-[48px]">
-                  <Checkbox
-                    slot="selection"
-                    isSelected={allChecked}
-                    isIndeterminate={someChecked}
-                    onChange={toggleAll}
-                    aria-label="Select all"
-                  />
-                </Table.Head>
-                <Table.Head>Title</Table.Head>
-                <Table.Head className="w-[120px]">Author</Table.Head>
-                <Table.Head className="w-[260px]">Slug</Table.Head>
-                <Table.Head className="w-[160px]">Last update</Table.Head>
-                <Table.Head className="w-[180px]">Status</Table.Head>
-                <Table.Head className="w-[56px]" />
-              </Table.Row>
+              <Table.Head id="title" label="Title" />
+              <Table.Head id="author" label="Author" className="w-[120px]" />
+              <Table.Head id="slug" label="Slug" className="w-[260px]" />
+              <Table.Head id="updated" label="Last update" className="w-[160px]" />
+              <Table.Head id="status" label="Status" className="w-[180px]" />
+              <Table.Head id="actions" className="w-[56px]" />
             </Table.Header>
 
-            <Table.Body>
-              {filtered.map((r) => {
-                const isChecked = !!selected[r.id]
-                return (
-                  <Table.Row key={r.id} className={isChecked ? "bg-primary_hover" : undefined}>
-                    <Table.Cell>
-                      <Checkbox
-                        slot="selection"
-                        isSelected={isChecked}
-                        onChange={(v) => toggleOne(r.id, v)}
-                        aria-label="Select row"
-                      />
-                    </Table.Cell>
-
-                    <Table.Cell>
-                      <div className="font-medium">{r.title}</div>
+            <Table.Body items={filtered}>
+              {(r: Row) => (
+                <Table.Row id={r.id}>
+                  <Table.Cell>
+                    <div>
+                      <div className="font-medium text-primary">{r.title}</div>
                       <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
-                    </Table.Cell>
+                    </div>
+                  </Table.Cell>
 
-                    <Table.Cell>
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center text-xs font-semibold">
-                          {r.author}
-                        </div>
-                      </div>
-                    </Table.Cell>
+                  <Table.Cell>
+                    <div className="flex items-center gap-2">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold">{r.author}</div>
+                    </div>
+                  </Table.Cell>
 
-                    <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
-                    <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
+                  <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
+                  <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
 
-                    <Table.Cell>
-                      <StatusPill status={r.status} />
-                    </Table.Cell>
+                  <Table.Cell>
+                    <StatusPill status={r.status} />
+                  </Table.Cell>
 
-                    <Table.Cell className="text-right">
-                      <Dropdown.Root>
-                        <Dropdown.DotsButton aria-label="Row actions" />
+                  <Table.Cell className="text-right">
+                    <Dropdown.Root>
+                      <Dropdown.DotsButton aria-label="Row actions" />
 
-                        <Dropdown.Popover className="w-min">
-                          <Dropdown.Menu>
-                            <Dropdown.Item label="Edit">Edit</Dropdown.Item>
-                            <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
-                            <Dropdown.Item label="Delete">Delete</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown.Popover>
-                      </Dropdown.Root>
-                    </Table.Cell>
-                  </Table.Row>
-                )
-              })}
+                      <Dropdown.Popover className="w-min">
+                        <Dropdown.Menu>
+                          <Dropdown.Item label="Edit">Edit</Dropdown.Item>
+                          <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
+                          <Dropdown.Item label="Delete">Delete</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown.Popover>
+                    </Dropdown.Root>
+                  </Table.Cell>
+                </Table.Row>
+              )}
             </Table.Body>
           </Table>
         </div>
