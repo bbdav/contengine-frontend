@@ -149,6 +149,7 @@ export default function Sidebar() {
               <ButtonUtility
                 tooltip="Collapse"
                 icon={LayoutLeft}
+                color="tertiary"
                 onClick={() => setIsPanelOpen(false)}
               />
             </div>
