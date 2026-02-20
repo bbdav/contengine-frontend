@@ -220,7 +220,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className="hidden shrink-0 lg:flex transition-[width] duration-200 ease-out"
+      className="hidden h-screen shrink-0 lg:flex transition-[width] duration-200 ease-out"
       style={{ width: totalWidth }}
     >
       {/* Left rail: no bg, only right-edge ring */}
@@ -292,7 +292,7 @@ export default function Sidebar() {
       {/* Sub nav panel: no bg, only right-edge ring */}
       <aside
         className={cx(
-          "relative flex h-full flex-col overflow-hidden transition-[width] duration-200 ease-out",
+          "relative flex h-full min-h-0 flex-col overflow-hidden transition-[width] duration-200 ease-out",
           "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
           !isPanelOpen && "pointer-events-none",
         )}
@@ -311,8 +311,8 @@ export default function Sidebar() {
             <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
           </div>
 
-        {/* Scrollable nav */}
-        <div className="min-h-0 flex-1 overflow-y-auto pb-4">
+        {/* Scrollable menu section (between search and footer) */}
+        <div className="mt-4 min-h-0 flex-1 overflow-y-auto pb-4">
           <SectionHeader label="Collections" isOpen={collectionsOpen} onToggle={() => setCollectionsOpen((v) => !v)} />
           {collectionsOpen ? (
             <ul className="mt-2 px-3">
