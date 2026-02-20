@@ -143,7 +143,7 @@ import { NavAccountCard } from "@/components/application/app-navigation/base-com
 import { NavItemButton } from "@/components/application/app-navigation/base-components/nav-item-button";
 import { NavItemBase } from "@/components/application/app-navigation/base-components/nav-item";
 
-const RAIL_WIDTH = 68;
+const RAIL_WIDTH = 52;
 const PANEL_WIDTH = 296;
 
 function SectionHeader({
