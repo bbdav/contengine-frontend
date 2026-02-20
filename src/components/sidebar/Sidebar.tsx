@@ -219,13 +219,11 @@ export default function Sidebar() {
         )}
         style={{ width: RAIL_WIDTH }}
       >
-        <div className="px-3">
-          <div className="flex h-10 items-center justify-center">
-            <CompanyLogo className="size-8" />
-          </div>
+        <div className="flex h-10 items-center justify-center">
+          <CompanyLogo className="size-8" />
         </div>
 
-        <div className="mt-4 flex flex-col gap-0.5 px-3">
+        <div className="mt-4 flex flex-col items-center gap-0.5">
           {topRailItems.map((item) => (
             <NavItemButton
               key={item.href}
@@ -242,8 +240,8 @@ export default function Sidebar() {
           ))}
         </div>
 
-        <div className="mt-auto px-3 pb-5">
-          <div className="flex flex-col gap-0.5">
+        <div className="mt-auto pb-5">
+          <div className="flex flex-col items-center gap-0.5">
             {bottomRailItems.map((item) => (
               <NavItemButton
                 key={item.href}
