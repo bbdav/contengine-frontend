@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useState } from "react";
-import { LifeBuoy01, LogOut01, Settings01 } from "@untitledui/icons";
+import { LifeBuoy01, LogOut01, Settings01, LayoutLeft } from "@untitledui/icons";
 import { AnimatePresence, motion } from "motion/react";
 import { Button as AriaButton, DialogTrigger as AriaDialogTrigger, Popover as AriaPopover } from "react-aria-components";
 import { Avatar } from "@/components/base/avatar/avatar";
@@ -28,14 +28,25 @@ interface SidebarNavigationSlimProps {
     hideBorder?: boolean;
     /** Whether to hide the right side border. */
     hideRightBorder?: boolean;
+    /** When true, show the secondary panel on desktop without requiring hover. */
+    defaultExpanded?: boolean;
 }
 
-export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hideBorder, hideRightBorder }: SidebarNavigationSlimProps) => {
+export const SidebarNavigationSlim = ({
+    activeUrl,
+    items,
+    footerItems = [],
+    hideBorder,
+    hideRightBorder,
+    defaultExpanded = false,
+}: SidebarNavigationSlimProps) => {
     const activeItem = [...items, ...footerItems].find((item) => item.href === activeUrl || item.items?.some((subItem) => subItem.href === activeUrl));
-    const [currentItem, setCurrentItem] = useState(activeItem || items[1]);
-    const [isHovering, setIsHovering] = useState(false);
+    const [currentItem, setCurrentItem] = useState(activeItem || items[0]);
 
-    const isSecondarySidebarVisible = isHovering && Boolean(currentItem.items?.length);
+    // Replace hover-only behavior with an explicit expanded state.
+    const [isExpanded, setIsExpanded] = useState(Boolean(defaultExpanded));
+
+    const isSecondarySidebarVisible = isExpanded && Boolean(currentItem.items?.length);
 
     const MAIN_SIDEBAR_WIDTH = 68;
     const SECONDARY_SIDEBAR_WIDTH = 268;
@@ -49,6 +60,7 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
                 "group flex h-full max-h-full max-w-full overflow-y-auto py-1 pl-1 transition duration-100 ease-linear",
                 isSecondarySidebarVisible && "bg-primary",
             )}
+            onPointerEnter={() => setIsExpanded(true)}
         >
             <div
                 className={cx(
@@ -69,7 +81,10 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
                                 href={item.href}
                                 label={item.label || ""}
                                 icon={item.icon}
-                                onClick={() => setCurrentItem(item)}
+                                onClick={() => {
+                                    setCurrentItem(item);
+                                    setIsExpanded(true);
+                                }}
                             />
                         </li>
                     ))}
@@ -136,7 +151,17 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
                     )}
                 >
                     <div style={{ width: SECONDARY_SIDEBAR_WIDTH }} className="flex h-full flex-col px-4 pt-6">
-                        <h3 className="text-sm font-semibold text-brand-secondary">{currentItem.label}</h3>
+                        <div className="flex items-center justify-between gap-3">
+                            <h3 className="text-sm font-semibold text-brand-secondary">{currentItem.label}</h3>
+                            <button
+                                type="button"
+                                aria-label="Collapse sidebar"
+                                onClick={() => setIsExpanded(false)}
+                                className="flex h-8 w-8 items-center justify-center rounded-md text-tertiary hover:bg-primary_hover"
+                            >
+                                <LayoutLeft className="h-5 w-5 rotate-180" />
+                            </button>
+                        </div>
                         <ul className="py-2">
                             {currentItem.items?.map((item) => (
                                 <li key={item.label} className="py-0.5">
@@ -164,11 +189,7 @@ export const SidebarNavigationSlim = ({ activeUrl, items, footerItems = [], hide
     return (
         <>
             {/* Desktop sidebar navigation */}
-            <div
-                className="z-50 hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex"
-                onPointerEnter={() => setIsHovering(true)}
-                onPointerLeave={() => setIsHovering(false)}
-            >
+            <div className="z-50 hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex">
                 {mainSidebar}
                 {secondarySidebar}
             </div>
