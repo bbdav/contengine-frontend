@@ -215,14 +215,14 @@ export default function Sidebar() {
       {/* Left rail: no bg, only right-edge ring */}
       <aside
         className={cx(
-          "relative flex h-full flex-col pt-5",
+          "relative flex h-full flex-col",
           "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
         )}
         style={{ width: RAIL_WIDTH }}
         onPointerEnter={() => setIsRailHovering(true)}
         onPointerLeave={() => setIsRailHovering(false)}
       >
-        <div className="relative flex h-10 items-center justify-center overflow-hidden">
+        <div className="relative flex w-full items-center justify-center overflow-hidden py-4">
           {/* When the sub-nav is collapsed, swap logo → expand button on rail hover with a quick push-slide. */}
           <div
             className={cx(
@@ -230,7 +230,7 @@ export default function Sidebar() {
               !isPanelOpen && isRailHovering ? "-translate-x-4 opacity-0" : "translate-x-0 opacity-100",
             )}
           >
-            <CompanyLogo className="size-8" />
+            <CompanyLogo className="size-7" />
           </div>
 
           {!isPanelOpen ? (
