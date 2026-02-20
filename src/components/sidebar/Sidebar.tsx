@@ -85,8 +85,11 @@ export default function Sidebar() {
     </Badge>
   );
 
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const totalWidth = RAIL_WIDTH + (isPanelOpen ? PANEL_WIDTH : 0);
+
   return (
-    <div className="hidden shrink-0 lg:flex" style={{ width: RAIL_WIDTH + PANEL_WIDTH }}>
+    <div className="hidden shrink-0 lg:flex" style={{ width: totalWidth }}>
       {/* Left rail: no bg, only right-edge ring */}
       <aside
         className={cx(
@@ -104,6 +107,10 @@ export default function Sidebar() {
               label={item.label}
               icon={item.icon}
               current={activeUrl === item.href || (item.href !== "/" && activeUrl.startsWith(item.href))}
+              onClick={() => {
+                // Clicking Content should always reveal the sub nav.
+                if (item.href === "/content") setIsPanelOpen(true);
+              }}
             />
           ))}
         </div>
@@ -125,22 +132,31 @@ export default function Sidebar() {
       </aside>
 
       {/* Sub nav panel: no bg, only right-edge ring */}
-      <aside
-        className={cx(
-          "relative flex h-full flex-col",
-          "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
-        )}
-        style={{ width: PANEL_WIDTH }}
-      >
-        {/* Fixed header */}
-        <div className="px-4 pt-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-primary">Content</h2>
+      {isPanelOpen ? (
+        <aside
+          className={cx(
+            "relative flex h-full flex-col",
+            "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
+          )}
+          style={{ width: PANEL_WIDTH }}
+        >
+          {/* Fixed header (pixel-perfect target: title + collapse button + search) */}
+          <div className="px-4 pt-5">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-primary">Content</h2>
+              <button
+                type="button"
+                aria-label="Collapse sidebar"
+                onClick={() => setIsPanelOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-md text-tertiary hover:bg-primary_hover"
+              >
+                <Grid01 className="size-5" />
+              </button>
+            </div>
+            <div className="mt-4">
+              <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
+            </div>
           </div>
-          <div className="mt-4">
-            <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
-          </div>
-        </div>
 
         {/* Scrollable nav */}
         <div className="min-h-0 flex-1 overflow-y-auto pb-4">
@@ -240,6 +256,7 @@ export default function Sidebar() {
           </div>
         </div>
       </aside>
+      ) : null}
     </div>
   );
 }
