@@ -207,6 +207,7 @@ export default function Sidebar() {
   );
 
   const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isRailHovering, setIsRailHovering] = useState(false);
   const totalWidth = RAIL_WIDTH + (isPanelOpen ? PANEL_WIDTH : 0);
 
   return (
@@ -218,9 +219,30 @@ export default function Sidebar() {
           "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
         )}
         style={{ width: RAIL_WIDTH }}
+        onPointerEnter={() => setIsRailHovering(true)}
+        onPointerLeave={() => setIsRailHovering(false)}
       >
-        <div className="flex h-10 items-center justify-center">
-          <CompanyLogo className="size-8" />
+        <div className="relative flex h-10 items-center justify-center overflow-hidden">
+          {/* When the sub-nav is collapsed, swap logo → expand button on rail hover with a quick push-slide. */}
+          <div
+            className={cx(
+              "transition-all duration-150 ease-out",
+              !isPanelOpen && isRailHovering ? "-translate-x-4 opacity-0" : "translate-x-0 opacity-100",
+            )}
+          >
+            <CompanyLogo className="size-8" />
+          </div>
+
+          {!isPanelOpen ? (
+            <div
+              className={cx(
+                "absolute inset-0 flex items-center justify-center transition-all duration-150 ease-out",
+                isRailHovering ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0",
+              )}
+            >
+              <ButtonUtility tooltip="Expand" icon={LayoutLeft} color="tertiary" onClick={() => setIsPanelOpen(true)} />
+            </div>
+          ) : null}
         </div>
 
         <div className="mt-4 flex flex-col items-center gap-0.5">
