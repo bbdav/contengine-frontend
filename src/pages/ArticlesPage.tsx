@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react"
-import { Calendar, Columns3, Filter, Flag, Search } from "lucide-react"
+import { Calendar, Columns01, HelpCircle, SearchLg } from "@untitledui/icons"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 import { Table } from "@/components/application/table/table"
+import { Badge } from "@/components/base/badges/badges"
 import { Button } from "@/components/base/buttons/button"
+import { ButtonUtility } from "@/components/base/buttons/button-utility"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
@@ -132,64 +134,82 @@ export default function ArticlesPage() {
   // We keep `selectedKeys` controlled so we can read/use it later.
 
   return (
-    <div className="min-h-screen bg-background-color-primary">
-      <div>  
-        <div className="border-b border-secondary px-6 py-3">
-                <Breadcrumbs type="button">
-          <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
-          <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
-          <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
-        </Breadcrumbs>
+    <div className="min-h-screen bg-secondary_subtle">
+      <div className="mx-auto w-full max-w-container px-6 py-6">
+        {/* Top bar */}
+        <div className="flex items-center justify-between gap-4">
+          <Breadcrumbs type="button">
+            <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
+            <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
+            <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
+          </Breadcrumbs>
+
+          <div className="flex items-center gap-2">
+            <Button color="secondary" size="sm">
+              Upgrade now
+            </Button>
+            <ButtonUtility icon={SearchLg} tooltip="Search" />
+            <ButtonUtility icon={HelpCircle} tooltip="Help" />
+          </div>
         </div>
 
-        <div className="px-6 mt-4 flex items-start justify-between gap-6">
+        {/* Page header */}
+        <div className="mt-6 flex items-start justify-between gap-6">
           <div>
-            <h1 className="text-3xl font-semibold tracking-tight">Article</h1>
-            <div className="mt-1 text-sm text-tertiary">7 entries found</div>
+            <h1 className="text-display-xs font-semibold text-primary">Article</h1>
+            <p className="mt-1 text-sm text-tertiary">7 entries found</p>
           </div>
 
-          <Button color="primary" size="sm">Create new entry</Button>
+          <Button color="primary" size="sm" className="rounded-xl">
+            Create new entry
+          </Button>
         </div>
 
-        <div className="mt-5 flex items-center gap-3">
-          <div className="relative w-[420px]">
-            <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-tertiary" />
+        {/* Controls */}
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <div className="w-full max-w-md">
             <Input
-              className="pl-9 pr-16 rounded-xl"
-              placeholder="Search for trades"
+              shortcut
+              size="sm"
+              placeholder="Search"
+              icon={SearchLg}
               value={query}
-              onChange={(value) => setQuery(value)}
+              onChange={setQuery}
+              className="rounded-xl"
             />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-tertiary border rounded-md px-2 py-1">
-              ⌘K
-            </div>
           </div>
 
-          <div className="flex-1" />
+          <div className="flex items-center gap-2">
+            <Button color="secondary" size="sm" className="rounded-xl" iconLeading={Calendar}>
+              Jan 10, 2025 – Jan 16, 2025
+            </Button>
 
-          <Button color="secondary" size="sm" className="rounded-xl gap-2">
-            <Calendar className="h-4 w-4" />
-            Jan 10, 2025 – Jan 16, 2025
-          </Button>
+            <Button color="secondary" size="sm" className="rounded-xl">
+              <span className="inline-flex items-center gap-2">
+                Filters
+                <Badge type="pill-color" size="sm" color="gray">
+                  3
+                </Badge>
+              </span>
+            </Button>
 
-          <Button color="secondary" size="sm" className="rounded-xl gap-2">
-            <Filter className="h-4 w-4" />
-            Filters
-            <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-secondary px-1.5 text-xs">
-              3
-            </span>
-          </Button>
+            <ButtonUtility icon={Columns01} tooltip="Columns" />
 
-          <Button color="secondary" className="rounded-xl h-9 w-9 p-0" aria-label="Columns">
-            <Columns3 className="h-4 w-4" />
-          </Button>
-
-          <Button color="secondary" className="rounded-xl h-9 w-9 p-0" aria-label="Locale">
-            <Flag className="h-4 w-4" />
-          </Button>
+            <Dropdown.Root>
+              <Button color="secondary" size="sm" className="rounded-xl">
+                EN
+              </Button>
+              <Dropdown.Popover className="w-min">
+                <Dropdown.Menu>
+                  <Dropdown.Item label="English">English</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown.Root>
+          </div>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-2xl bg-primary shadow-xs ring-1 ring-secondary">
+        {/* Table */}
+        <div className="mt-4 overflow-hidden rounded-xl bg-primary shadow-xs ring-1 ring-secondary">
           <Table
             aria-label="Articles"
             selectionMode="multiple"
@@ -204,7 +224,7 @@ export default function ArticlesPage() {
             }}
           >
             <Table.Header>
-              <Table.Head id="title" label="Title" />
+              <Table.Head id="title" label="Title" allowsSorting />
               <Table.Head id="author" label="Author" className="w-[120px]" />
               <Table.Head id="slug" label="Slug" className="w-[260px]" />
               <Table.Head id="updated" label="Last update" className="w-[160px]" />
@@ -254,19 +274,8 @@ export default function ArticlesPage() {
           </Table>
         </div>
 
-        <div className="mt-6 flex items-center justify-between pb-10">
-          <div className="inline-flex rounded-xl border overflow-hidden bg-primary">
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">←</button>
-            <button className="px-3 py-2 text-sm bg-primary_hover">1</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">2</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">3</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">…</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">8</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">9</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">10</button>
-            <button className="px-3 py-2 text-sm text-tertiary hover:bg-primary_hover">→</button>
-          </div>
-
+        {/* Footer controls */}
+        <div className="mt-6 flex items-center justify-end gap-3 pb-10">
           <Button color="tertiary" className="text-tertiary">
             View 25
           </Button>
