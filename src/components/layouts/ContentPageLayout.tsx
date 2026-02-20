@@ -1,0 +1,52 @@
+import type { ReactNode } from "react";
+import { HelpCircle, SearchLg } from "@untitledui/icons";
+
+import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
+
+type ContentPageLayoutProps = {
+    breadcrumbs?: ReactNode;
+    title: ReactNode;
+    subtitle?: ReactNode;
+    primaryAction?: ReactNode;
+    /** Right side of the top bar (defaults to Upgrade + Search + Help). */
+    topRightActions?: ReactNode;
+    children: ReactNode;
+};
+
+const DefaultTopRightActions = () => {
+    return (
+        <div className="flex items-center gap-2">
+            <Button color="secondary" size="sm">
+                Upgrade now
+            </Button>
+            <ButtonUtility icon={SearchLg} tooltip="Search" />
+            <ButtonUtility icon={HelpCircle} tooltip="Help" />
+        </div>
+    );
+};
+
+export function ContentPageLayout({ breadcrumbs, title, subtitle, primaryAction, topRightActions, children }: ContentPageLayoutProps) {
+    return (
+        <div className="mx-auto w-full max-w-container px-6 py-6">
+            {/* Top bar */}
+            <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0">{breadcrumbs}</div>
+                {topRightActions ?? <DefaultTopRightActions />}
+            </div>
+
+            {/* Header */}
+            <div className="mt-6 flex items-start justify-between gap-6">
+                <div className="min-w-0">
+                    <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
+                    {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
+                </div>
+
+                {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
+            </div>
+
+            {/* Page body */}
+            {children}
+        </div>
+    );
+}

@@ -5,9 +5,9 @@ type StatCardProps = {
 
 export default function StatCard({ label, value }: StatCardProps) {
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold">{value}</div>
+    <div className="rounded-xl bg-primary p-4 shadow-xs ring-1 ring-secondary">
+      <div className="text-sm text-tertiary">{label}</div>
+      <div className="mt-2 text-display-sm font-semibold text-primary">{value}</div>
     </div>
   )
 }

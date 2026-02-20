@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Calendar, Columns01, HelpCircle, SearchLg } from "@untitledui/icons"
+import { Calendar, Columns01, SearchLg } from "@untitledui/icons"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 import { Table } from "@/components/application/table/table"
@@ -8,6 +8,7 @@ import { Button } from "@/components/base/buttons/button"
 import { ButtonUtility } from "@/components/base/buttons/button-utility"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
+import { ContentPageLayout } from "@/components/layouts/ContentPageLayout"
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
 
 type Row = {
@@ -134,36 +135,22 @@ export default function ArticlesPage() {
   // We keep `selectedKeys` controlled so we can read/use it later.
 
   return (
-    <div className="min-h-screen bg-secondary_subtle">
-      <div className="mx-auto w-full max-w-container px-6 py-6">
-        {/* Top bar */}
-        <div className="flex items-center justify-between gap-4">
-          <Breadcrumbs type="button">
-            <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
-            <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
-            <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
-          </Breadcrumbs>
-
-          <div className="flex items-center gap-2">
-            <Button color="secondary" size="sm">
-              Upgrade now
-            </Button>
-            <ButtonUtility icon={SearchLg} tooltip="Search" />
-            <ButtonUtility icon={HelpCircle} tooltip="Help" />
-          </div>
-        </div>
-
-        {/* Page header */}
-        <div className="mt-6 flex items-start justify-between gap-6">
-          <div>
-            <h1 className="text-display-xs font-semibold text-primary">Article</h1>
-            <p className="mt-1 text-sm text-tertiary">7 entries found</p>
-          </div>
-
-          <Button color="primary" size="sm" className="rounded-xl">
-            Create new entry
-          </Button>
-        </div>
+    <ContentPageLayout
+      breadcrumbs={
+        <Breadcrumbs type="button">
+          <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
+        </Breadcrumbs>
+      }
+      title="Article"
+      subtitle="7 entries found"
+      primaryAction={
+        <Button color="primary" size="sm" className="rounded-xl">
+          Create new entry
+        </Button>
+      }
+    >
 
         {/* Controls */}
         <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
@@ -280,7 +267,6 @@ export default function ArticlesPage() {
             View 25
           </Button>
         </div>
-      </div>
-    </div>
+    </ContentPageLayout>
   )
 }
