@@ -37,7 +37,7 @@ export const NavItemBase = ({ current, type, badge, href, icon: Icon, children, 
 
     const badgeElement =
         badge && (typeof badge === "string" || typeof badge === "number") ? (
-            <Badge className="ml-3 ring-0 border border-utility-gray-200" color="gray" type="pill-color" size="sm">
+            <Badge className="ml-3 ring-0 border border-solid border-[1px] border-utility-gray-200" color="gray" type="pill-color" size="sm">
                 {badge}
             </Badge>
         ) : (
