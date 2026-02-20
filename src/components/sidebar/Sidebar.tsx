@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import {
+  ChevronDown,
+  ChevronUp,
   CodeSquare02,
   Grid01,
   HelpCircle,
@@ -156,14 +158,18 @@ function SectionHeader({
   onToggle: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      className="mt-5 flex w-full cursor-pointer items-center justify-between gap-3 px-4 text-xs font-semibold text-tertiary"
-    >
-      <span>{label}</span>
-      <span className="text-tertiary">{isOpen ? "▴" : "▾"}</span>
-    </button>
+    <div className="mt-5 flex w-full items-center justify-between gap-3 px-4">
+      <span className="text-xs font-medium text-tertiary">{label}</span>
+      {/* Design: Buttons/Button close X (18x18) with chevron icon */}
+      <button
+        type="button"
+        aria-label={isOpen ? `Collapse ${label}` : `Expand ${label}`}
+        onClick={onToggle}
+        className="flex size-[18px] cursor-pointer items-center justify-center rounded-md text-tertiary hover:bg-quaternary"
+      >
+        {isOpen ? <ChevronUp className="size-4" /> : <ChevronDown className="size-4" />}
+      </button>
+    </div>
   );
 }
 
