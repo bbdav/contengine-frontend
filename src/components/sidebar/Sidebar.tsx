@@ -287,20 +287,17 @@ export default function Sidebar() {
           )}
           style={{ width: PANEL_WIDTH }}
         >
-          {/* Fixed header (pixel-perfect target: title + collapse button + search) */}
-          <div className="px-4 pt-5">
+          {/* Fixed header (title + collapse) */}
+          <div className="p-4 border-b border-secondary">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-primary">Content</h2>
-              <ButtonUtility
-                tooltip="Collapse"
-                icon={LayoutLeft}
-                color="tertiary"
-                onClick={() => setIsPanelOpen(false)}
-              />
+              <ButtonUtility tooltip="Collapse" icon={LayoutLeft} color="tertiary" onClick={() => setIsPanelOpen(false)} />
             </div>
-            <div className="mt-4">
-              <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
-            </div>
+          </div>
+
+          {/* Fixed search */}
+          <div className="px-4 pt-4">
+            <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
           </div>
 
         {/* Scrollable nav */}
