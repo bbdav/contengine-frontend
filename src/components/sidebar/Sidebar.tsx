@@ -208,10 +208,15 @@ export default function Sidebar() {
 
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [isRailHovering, setIsRailHovering] = useState(false);
-  const totalWidth = RAIL_WIDTH + (isPanelOpen ? PANEL_WIDTH : 0);
+
+  const panelWidth = isPanelOpen ? PANEL_WIDTH : 0;
+  const totalWidth = RAIL_WIDTH + panelWidth;
 
   return (
-    <div className="hidden shrink-0 lg:flex" style={{ width: totalWidth }}>
+    <div
+      className="hidden shrink-0 lg:flex transition-[width] duration-200 ease-out"
+      style={{ width: totalWidth }}
+    >
       {/* Left rail: no bg, only right-edge ring */}
       <aside
         className={cx(
@@ -279,14 +284,14 @@ export default function Sidebar() {
       </aside>
 
       {/* Sub nav panel: no bg, only right-edge ring */}
-      {isPanelOpen ? (
-        <aside
-          className={cx(
-            "relative flex h-full flex-col",
-            "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
-          )}
-          style={{ width: PANEL_WIDTH }}
-        >
+      <aside
+        className={cx(
+          "relative flex h-full flex-col overflow-hidden transition-[width] duration-200 ease-out",
+          "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
+          !isPanelOpen && "pointer-events-none",
+        )}
+        style={{ width: panelWidth }}
+      >
           {/* Fixed header (title + collapse) */}
           <div className="p-4 border-b border-secondary">
             <div className="flex items-center justify-between">
@@ -398,7 +403,6 @@ export default function Sidebar() {
           </div>
         </div>
       </aside>
-      ) : null}
     </div>
   );
 }
