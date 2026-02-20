@@ -51,6 +51,9 @@ export const SidebarNavigationSlim = ({
     const MAIN_SIDEBAR_WIDTH = 68;
     const SECONDARY_SIDEBAR_WIDTH = 268;
 
+    // Total width when expanded on desktop. Used by the parent layout.
+    const TOTAL_WIDTH = MAIN_SIDEBAR_WIDTH + (isSecondarySidebarVisible ? SECONDARY_SIDEBAR_WIDTH : 0);
+
     const mainSidebar = (
         <aside
             style={{
@@ -188,19 +191,11 @@ export const SidebarNavigationSlim = ({
 
     return (
         <>
-            {/* Desktop sidebar navigation */}
-            <div className="z-50 hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex">
+            {/* Desktop sidebar navigation (static in layout, not fixed) */}
+            <div style={{ width: TOTAL_WIDTH }} className="z-50 hidden shrink-0 lg:flex">
                 {mainSidebar}
                 {secondarySidebar}
             </div>
-
-            {/* Placeholder to take up physical space because the real sidebar has `fixed` position. */}
-            <div
-                style={{
-                    paddingLeft: MAIN_SIDEBAR_WIDTH,
-                }}
-                className="invisible hidden lg:sticky lg:top-0 lg:bottom-0 lg:left-0 lg:block"
-            />
 
             {/* Mobile header navigation */}
             <MobileNavigationHeader>
