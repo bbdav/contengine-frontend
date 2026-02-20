@@ -240,7 +240,7 @@ export default function Sidebar() {
                 isRailHovering ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0",
               )}
             >
-              <ButtonUtility tooltip="Expand" icon={LayoutLeft} color="tertiary" onClick={() => setIsPanelOpen(true)} />
+              <ButtonUtility tooltip="Expand" icon={LayoutLeft} color="tertiary" size="xs" onClick={() => setIsPanelOpen(true)} />
             </div>
           ) : null}
         </div>
@@ -291,7 +291,7 @@ export default function Sidebar() {
           <div className="p-4 border-b border-secondary">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-primary">Content</h2>
-              <ButtonUtility tooltip="Collapse" icon={LayoutLeft} color="tertiary" onClick={() => setIsPanelOpen(false)} />
+              <ButtonUtility tooltip="Collapse" icon={LayoutLeft} color="tertiary" size="xs" onClick={() => setIsPanelOpen(false)} />
             </div>
           </div>
 
