@@ -5,6 +5,7 @@ import {
   HelpCircle,
   HomeLine,
   Image03,
+  LayoutLeft,
   PenTool02,
   PieChart03,
   Plus,
@@ -15,6 +16,7 @@ import {
 
 import { Badge } from "@/components/base/badges/badges";
 import { Button } from "@/components/base/buttons/button";
+import { ButtonUtility } from "@/components/base/buttons/button-utility";
 import { Input } from "@/components/base/input/input";
 import { Dot } from "@/components/foundations/dot-icon";
 import { cx } from "@/lib/utils/cx";
@@ -144,14 +146,11 @@ export default function Sidebar() {
           <div className="px-4 pt-5">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-primary">Content</h2>
-              <button
-                type="button"
-                aria-label="Collapse sidebar"
+              <ButtonUtility
+                tooltip="Collapse"
+                icon={LayoutLeft}
                 onClick={() => setIsPanelOpen(false)}
-                className="flex h-8 w-8 items-center justify-center rounded-md text-tertiary hover:bg-primary_hover"
-              >
-                <Grid01 className="size-5" />
-              </button>
+              />
             </div>
             <div className="mt-4">
               <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
