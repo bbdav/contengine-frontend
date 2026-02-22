@@ -28,25 +28,27 @@ const DefaultTopRightActions = () => {
 
 export function ContentPageLayout({ breadcrumbs, title, subtitle, primaryAction, topRightActions, children }: ContentPageLayoutProps) {
     return (
-        <div className="mx-auto w-full max-w-container px-6 py-6">
+        <div className="w-full">
             {/* Top bar */}
-            <div className="flex items-center justify-between gap-4">
-                <div className="min-w-0">{breadcrumbs}</div>
-                {topRightActions ?? <DefaultTopRightActions />}
+            <div className="flex h-[60px] items-center justify-between border-b border-secondary">
+                <div className="flex h-full min-w-0 items-center px-3 py-6">{breadcrumbs}</div>
+                <div className="shrink-0 pr-3">{topRightActions ?? <DefaultTopRightActions />}</div>
             </div>
 
-            {/* Header */}
-            <div className="mt-6 flex items-start justify-between gap-6">
-                <div className="min-w-0">
-                    <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
-                    {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
+            <div className="mx-auto w-full max-w-container px-6 py-6">
+                {/* Header */}
+                <div className="mt-6 flex items-start justify-between gap-6">
+                    <div className="min-w-0">
+                        <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
+                        {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
+                    </div>
+
+                    {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
                 </div>
 
-                {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
+                {/* Page body */}
+                {children}
             </div>
-
-            {/* Page body */}
-            {children}
         </div>
     );
 }

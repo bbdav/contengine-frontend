@@ -299,8 +299,8 @@ export default function Sidebar() {
         style={{ width: panelWidth }}
       >
           {/* Fixed header (title + collapse) */}
-          <div className="p-4 border-b border-secondary">
-            <div className="flex items-center justify-between">
+          <div className="flex h-[60px] items-center border-b border-secondary px-3 py-6">
+            <div className="flex w-full items-center justify-between">
               <h2 className="text-lg font-semibold text-primary">Content</h2>
               <ButtonUtility tooltip="Collapse" icon={LayoutLeft} color="tertiary" size="xs" onClick={() => setIsPanelOpen(false)} />
             </div>
