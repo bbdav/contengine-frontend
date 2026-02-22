@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { HelpCircle, SearchLg } from "@untitledui/icons";
+import { XClose, Zap } from "@untitledui/icons";
 
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
@@ -17,11 +17,11 @@ type ContentPageLayoutProps = {
 const DefaultTopRightActions = () => {
     return (
         <div className="flex items-center gap-2">
-            <Button color="secondary" size="sm">
+            <Button color="secondary" size="md" iconLeading={Zap}>
                 Upgrade now
             </Button>
-            <ButtonUtility icon={SearchLg} tooltip="Search" />
-            <ButtonUtility icon={HelpCircle} tooltip="Help" />
+            <ButtonUtility icon={XClose} tooltip="Close" size="md" />
+            <ButtonUtility icon={XClose} tooltip="Close" size="md" />
         </div>
     );
 };
