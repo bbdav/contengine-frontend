@@ -31,8 +31,8 @@ export function ContentPageLayout({ breadcrumbs, title, subtitle, primaryAction,
         <div className="w-full">
             {/* Top bar */}
             <div className="flex h-[60px] items-center justify-between border-b border-secondary">
-                <div className="flex h-full min-w-0 items-center px-3 py-6">{breadcrumbs}</div>
-                <div className="shrink-0 pr-3">{topRightActions ?? <DefaultTopRightActions />}</div>
+                <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
+                <div className="shrink-0 px-6 py-3">{topRightActions ?? <DefaultTopRightActions />}</div>
             </div>
 
             <div className="mx-auto w-full max-w-container px-6 py-6">

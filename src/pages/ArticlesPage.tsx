@@ -146,32 +146,32 @@ export default function ArticlesPage() {
       title="Article"
       subtitle="7 entries found"
       primaryAction={
-        <Button color="primary" size="sm" className="rounded-xl">
+        <Button color="primary" size="md" className="rounded-lg">
           Create new entry
         </Button>
       }
     >
 
         {/* Controls */}
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <div className="w-full max-w-md">
             <Input
               shortcut
-              size="sm"
+              size="md"
               placeholder="Search"
               icon={SearchLg}
               value={query}
               onChange={setQuery}
-              className="rounded-xl"
+              className="rounded-lg"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Button color="secondary" size="sm" className="rounded-xl" iconLeading={Calendar}>
+            <Button color="secondary" size="md" iconLeading={Calendar}>
               Jan 10, 2025 – Jan 16, 2025
             </Button>
 
-            <Button color="secondary" size="sm" className="rounded-xl">
+            <Button color="secondary" size="md">
               <span className="inline-flex items-center gap-2">
                 Filters
                 <Badge type="pill-color" size="sm" color="gray">
@@ -180,10 +180,10 @@ export default function ArticlesPage() {
               </span>
             </Button>
 
-            <ButtonUtility icon={Columns01} tooltip="Columns" />
+            <ButtonUtility icon={Columns01} tooltip="Columns" size="md" />
 
             <Dropdown.Root>
-              <Button color="secondary" size="sm" className="rounded-xl">
+              <Button color="secondary" size="md">
                 EN
               </Button>
               <Dropdown.Popover className="w-min">
@@ -196,7 +196,7 @@ export default function ArticlesPage() {
         </div>
 
         {/* Table */}
-        <div className="mt-4 overflow-hidden rounded-xl bg-primary shadow-xs ring-1 ring-secondary">
+        <div className="mt-4 overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
           <Table
             aria-label="Articles"
             selectionMode="multiple"
