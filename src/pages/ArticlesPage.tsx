@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Calendar, Columns01, SearchLg } from "@untitledui/icons"
+import { Calendar, Columns01, FilterLines, SearchLg } from "@untitledui/icons"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 import { Table } from "@/components/application/table/table"
@@ -157,7 +157,7 @@ export default function ArticlesPage() {
           <div className="w-full max-w-md">
             <Input
               shortcut
-              size="md"
+              size="sm"
               placeholder="Search"
               icon={SearchLg}
               value={query}
@@ -171,10 +171,10 @@ export default function ArticlesPage() {
               Jan 10, 2025 – Jan 16, 2025
             </Button>
 
-            <Button color="secondary" size="md">
+            <Button color="secondary" size="md" iconLeading={FilterLines}>
               <span className="inline-flex items-center gap-2">
                 Filters
-                <Badge type="pill-color" size="sm" color="gray">
+                <Badge type="modern" size="sm" color="gray" className="py-0">
                   3
                 </Badge>
               </span>
