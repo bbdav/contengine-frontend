@@ -27,6 +27,26 @@ type Row = {
   selected?: boolean
 }
 
+type Language = {
+  code: string
+  label: string
+  countryFlag: "US"
+}
+
+const LANGUAGES: Language[] = [
+  { code: "en", label: "English", countryFlag: "US" },
+  { code: "fr", label: "Français", countryFlag: "US" },
+  { code: "es", label: "Español", countryFlag: "US" },
+]
+
+const UsFlagIcon = ({ className }: { className?: string }) => (
+  <img
+    src="https://www.untitledui.com/images/flags/US.svg"
+    alt="US flag"
+    className={className ?? "size-5 rounded-full"}
+  />
+)
+
 const InReviewIcon = ({ className }: { className?: string }) => <CircleHalf className={className} weight="fill" />
 const ReadyToPublishIcon = ({ className }: { className?: string }) => <RocketLaunch className={className} weight="fill" />
 const PublishedIcon = ({ className }: { className?: string }) => <CheckCircle className={className} weight="fill" />
@@ -55,6 +75,7 @@ export default function ArticlesPage() {
   const [query, setQuery] = useState("")
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
   const [page, setPage] = useState(1)
+  const [language, setLanguage] = useState<Language>(LANGUAGES[0])
 
   const rows = useMemo<Row[]>(
     () => [
@@ -196,12 +217,20 @@ export default function ArticlesPage() {
               <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
 
               <Dropdown.Root>
-                <Button color="secondary" size="md">
-                  EN
+                <Button color="secondary" size="md" iconLeading={UsFlagIcon} iconTrailing={ChevronDown}>
+                  {language.label}
                 </Button>
                 <Dropdown.Popover className="w-min">
                   <Dropdown.Menu>
-                    <Dropdown.Item label="English">English</Dropdown.Item>
+                    {LANGUAGES.map((lang) => (
+                      <Dropdown.Item
+                        key={lang.code}
+                        label={lang.label}
+                        onAction={() => {
+                          setLanguage(lang)
+                        }}
+                      />
+                    ))}
                   </Dropdown.Menu>
                 </Dropdown.Popover>
               </Dropdown.Root>
