@@ -486,7 +486,7 @@ export default function ArticlesPage() {
                     <Table.Row id={r.id}>
                       <Table.Cell>
                         <div>
-                          <div className="font-medium text-primary">{r.title}</div>
+                          <div className="font-medium text-primary line-clamp-2">{r.title}</div>
                           <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
                         </div>
                       </Table.Cell>
