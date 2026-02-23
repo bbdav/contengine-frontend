@@ -220,7 +220,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className="hidden h-screen shrink-0 lg:flex transition-[width] duration-200 ease-out"
+      className="hidden h-screen shrink-0 lg:flex bg-tertiary transition-[width] duration-200 ease-out"
       style={{ width: totalWidth }}
     >
       {/* Left rail: no bg, only right-edge ring */}

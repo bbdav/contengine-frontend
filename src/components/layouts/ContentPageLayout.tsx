@@ -11,6 +11,13 @@ type ContentPageLayoutProps = {
     primaryAction?: ReactNode;
     /** Right side of the top bar (defaults to Upgrade + Search + Help). */
     topRightActions?: ReactNode;
+    /** Hide the default page header (title/subtitle/primary action) inside the container. */
+    hideHeader?: boolean;
+    /**
+     * Customize the main content container wrapper.
+     * Defaults to: "mx-auto w-full max-w-container px-6 py-6"
+     */
+    containerClassName?: string;
     children: ReactNode;
 };
 
@@ -26,7 +33,16 @@ const DefaultTopRightActions = () => {
     );
 };
 
-export function ContentPageLayout({ breadcrumbs, title, subtitle, primaryAction, topRightActions, children }: ContentPageLayoutProps) {
+export function ContentPageLayout({
+    breadcrumbs,
+    title,
+    subtitle,
+    primaryAction,
+    topRightActions,
+    hideHeader = false,
+    containerClassName,
+    children,
+}: ContentPageLayoutProps) {
     return (
         <div className="w-full">
             {/* Top bar */}
@@ -35,16 +51,18 @@ export function ContentPageLayout({ breadcrumbs, title, subtitle, primaryAction,
                 <div className="shrink-0 px-6 py-3">{topRightActions ?? <DefaultTopRightActions />}</div>
             </div>
 
-            <div className="mx-auto w-full max-w-container px-6 py-6">
+            <div className={containerClassName ?? "mx-auto w-full max-w-container px-6 py-6"}>
                 {/* Header */}
-                <div className="mt-6 flex items-start justify-between gap-6">
-                    <div className="min-w-0">
-                        <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
-                        {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
-                    </div>
+                {!hideHeader ? (
+                    <div className="mt-6 flex items-start justify-between gap-6">
+                        <div className="min-w-0">
+                            <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
+                            {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
+                        </div>
 
-                    {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
-                </div>
+                        {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
+                    </div>
+                ) : null}
 
                 {/* Page body */}
                 {children}
