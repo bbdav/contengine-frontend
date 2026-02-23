@@ -28,24 +28,21 @@ type Row = {
 }
 
 type Language = {
-  code: string
+  code: "en" | "fr" | "es"
   label: string
-  countryFlag: "US"
+  flag: "US" | "FR" | "ES"
 }
 
 const LANGUAGES: Language[] = [
-  { code: "en", label: "English", countryFlag: "US" },
-  { code: "fr", label: "Français", countryFlag: "US" },
-  { code: "es", label: "Español", countryFlag: "US" },
+  { code: "en", label: "English", flag: "US" },
+  { code: "fr", label: "Français", flag: "FR" },
+  { code: "es", label: "Español", flag: "ES" },
 ]
 
-const UsFlagIcon = ({ className }: { className?: string }) => (
-  <img
-    src="https://www.untitledui.com/images/flags/US.svg"
-    alt="US flag"
-    className={className ?? "size-5 rounded-full"}
-  />
-)
+const makeFlagIcon = (flag: Language["flag"]) =>
+  function FlagIcon({ className }: { className?: string }) {
+    return <img src={`https://www.untitledui.com/images/flags/${flag}.svg`} alt={`${flag} flag`} className={className ?? "size-4 rounded-full"} />
+  }
 
 const InReviewIcon = ({ className }: { className?: string }) => <CircleHalf className={className} weight="fill" />
 const ReadyToPublishIcon = ({ className }: { className?: string }) => <RocketLaunch className={className} weight="fill" />
@@ -217,8 +214,8 @@ export default function ArticlesPage() {
               <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
 
               <Dropdown.Root>
-                <Button color="secondary" size="md" iconLeading={UsFlagIcon} iconTrailing={ChevronDown}>
-                  {language.label}
+                <Button color="secondary" size="md" iconLeading={makeFlagIcon(language.flag)} iconTrailing={ChevronDown}>
+                  {language.code.toUpperCase()}
                 </Button>
                 <Dropdown.Popover className="w-min">
                   <Dropdown.Menu>
@@ -226,6 +223,7 @@ export default function ArticlesPage() {
                       <Dropdown.Item
                         key={lang.code}
                         label={lang.label}
+                        icon={makeFlagIcon(lang.flag)}
                         onAction={() => {
                           setLanguage(lang)
                         }}
