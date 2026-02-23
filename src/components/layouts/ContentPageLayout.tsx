@@ -53,9 +53,9 @@ export function ContentPageLayout({
     children,
 }: ContentPageLayoutProps) {
     return (
-        <div className="w-full">
+        <div className="flex h-full w-full flex-col">
             {/* Header wrapper (top bar + optional header content) */}
-            <div className="w-full">
+            <div className="w-full shrink-0">
                 <div className={headerContainerClassName ?? "mx-auto w-full max-w-container"}>
                     {/* Top bar */}
                     <div className="flex h-[60px] items-center justify-between border-b border-secondary">
@@ -82,7 +82,7 @@ export function ContentPageLayout({
             </div>
 
             {/* Page body */}
-            <div className={containerClassName ?? "mx-auto w-full max-w-container px-6 py-6"}>{children}</div>
+            <div className={containerClassName ?? "mx-auto w-full max-w-container px-6 py-6 flex-1 min-h-0 overflow-y-auto"}>{children}</div>
         </div>
     );
 }

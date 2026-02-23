@@ -144,7 +144,7 @@ export default function ArticlesPage() {
       }
       title="Article"
       hideHeader
-      containerClassName="w-full px-0 py-0"
+      containerClassName="w-full flex-1 min-h-0 overflow-hidden px-0 py-0"
       headerContainerClassName="w-full"
       headerContent={
         <div className="px-6">
@@ -163,10 +163,10 @@ export default function ArticlesPage() {
         </div>
       }
     >
-      {/* Controls + table */}
-      <div className="px-6 pb-0">
-        <div className="mt-4">
-          {/* Controls */}
+      {/* Body (right side): controls stay visible; table scrolls; pagination stays at the bottom */}
+      <div className="flex h-full flex-col">
+        {/* Controls */}
+        <div className="shrink-0 px-6 pt-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="w-full max-w-md">
               <Input
@@ -180,107 +180,108 @@ export default function ArticlesPage() {
               />
             </div>
 
-        <div className="flex items-center gap-2">
-          <Button color="secondary" size="md" iconLeading={Calendar}>
-            Jan 10, 2025 – Jan 16, 2025
-          </Button>
+            <div className="flex items-center gap-2">
+              <Button color="secondary" size="md" iconLeading={Calendar}>
+                Jan 10, 2025 – Jan 16, 2025
+              </Button>
 
-          <Button color="secondary" size="md" iconLeading={FilterLines}>
-            <span className="inline-flex items-center gap-2">
-              Filters
-              <Badge type="modern" size="sm" color="gray" className="py-0">
-                3
-              </Badge>
-            </span>
-          </Button>
+              <Button color="secondary" size="md" iconLeading={FilterLines}>
+                <span className="inline-flex items-center gap-2">
+                  Filters
+                  <Badge type="modern" size="sm" color="gray" className="py-0">
+                    3
+                  </Badge>
+                </span>
+              </Button>
 
-          <ButtonUtility icon={Columns01} tooltip="Columns" size="md" />
+              <ButtonUtility icon={Columns01} tooltip="Columns" size="md" />
 
-          <Dropdown.Root>
-            <Button color="secondary" size="md">
-              EN
-            </Button>
-            <Dropdown.Popover className="w-min">
-              <Dropdown.Menu>
-                <Dropdown.Item label="English">English</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown.Popover>
-          </Dropdown.Root>
+              <Dropdown.Root>
+                <Button color="secondary" size="md">
+                  EN
+                </Button>
+                <Dropdown.Popover className="w-min">
+                  <Dropdown.Menu>
+                    <Dropdown.Item label="English">English</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown.Popover>
+              </Dropdown.Root>
+            </div>
+          </div>
         </div>
-      </div>
 
-        {/* Table */}
-        <div className="mt-4 overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
-          <Table
-            aria-label="Articles"
-            selectionMode="multiple"
-            selectedKeys={selectedKeys}
-            onSelectionChange={(keys) => {
-              // react-aria can pass "all" or a Set.
-              if (keys === "all") {
-                setSelectedKeys(new Set(filtered.map((r) => r.id)))
-              } else {
-                setSelectedKeys(new Set(Array.from(keys as Set<string>).map(String)))
-              }
-            }}
-          >
-          <Table.Header>
-            <Table.Head id="title" label="Title" allowsSorting />
-            <Table.Head id="author" label="Author" className="w-[120px]" />
-            <Table.Head id="slug" label="Slug" className="w-[260px]" />
-            <Table.Head id="updated" label="Last update" className="w-[160px]" />
-            <Table.Head id="status" label="Status" className="w-[180px]" />
-            <Table.Head id="actions" className="w-[56px]" />
-          </Table.Header>
+        {/* Table (scrolls) */}
+        <div className="mt-4 flex-1 min-h-0 px-6">
+          <div className="h-full overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
+            <div className="h-full overflow-auto">
+              <Table
+                aria-label="Articles"
+                selectionMode="multiple"
+                selectedKeys={selectedKeys}
+                onSelectionChange={(keys) => {
+                  // react-aria can pass "all" or a Set.
+                  if (keys === "all") {
+                    setSelectedKeys(new Set(filtered.map((r) => r.id)))
+                  } else {
+                    setSelectedKeys(new Set(Array.from(keys as Set<string>).map(String)))
+                  }
+                }}
+              >
+                <Table.Header>
+                  <Table.Head id="title" label="Title" allowsSorting />
+                  <Table.Head id="author" label="Author" className="w-[120px]" />
+                  <Table.Head id="slug" label="Slug" className="w-[260px]" />
+                  <Table.Head id="updated" label="Last update" className="w-[160px]" />
+                  <Table.Head id="status" label="Status" className="w-[180px]" />
+                  <Table.Head id="actions" className="w-[56px]" />
+                </Table.Header>
 
-          <Table.Body items={filtered}>
-            {(r: Row) => (
-              <Table.Row id={r.id}>
-                <Table.Cell>
-                  <div>
-                    <div className="font-medium text-primary">{r.title}</div>
-                    <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
-                  </div>
-                </Table.Cell>
+                <Table.Body items={filtered}>
+                  {(r: Row) => (
+                    <Table.Row id={r.id}>
+                      <Table.Cell>
+                        <div>
+                          <div className="font-medium text-primary">{r.title}</div>
+                          <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
+                        </div>
+                      </Table.Cell>
 
-                <Table.Cell>
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold">{r.author}</div>
-                  </div>
-                </Table.Cell>
+                      <Table.Cell>
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold">{r.author}</div>
+                        </div>
+                      </Table.Cell>
 
-                <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
-                <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
+                      <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
+                      <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
 
-                <Table.Cell>
-                  <StatusPill status={r.status} />
-                </Table.Cell>
+                      <Table.Cell>
+                        <StatusPill status={r.status} />
+                      </Table.Cell>
 
-                <Table.Cell className="text-right">
-                  <Dropdown.Root>
-                    <Dropdown.DotsButton aria-label="Row actions" />
+                      <Table.Cell className="text-right">
+                        <Dropdown.Root>
+                          <Dropdown.DotsButton aria-label="Row actions" />
 
-                    <Dropdown.Popover className="w-min">
-                      <Dropdown.Menu>
-                        <Dropdown.Item label="Edit">Edit</Dropdown.Item>
-                        <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
-                        <Dropdown.Item label="Delete">Delete</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown.Popover>
-                  </Dropdown.Root>
-                </Table.Cell>
-              </Table.Row>
-            )}
-          </Table.Body>
-        </Table>
-      </div>
-
-          {/* Pagination is fixed at the bottom of the page. (See below) */}
+                          <Dropdown.Popover className="w-min">
+                            <Dropdown.Menu>
+                              <Dropdown.Item label="Edit">Edit</Dropdown.Item>
+                              <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
+                              <Dropdown.Item label="Delete">Delete</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown.Popover>
+                        </Dropdown.Root>
+                      </Table.Cell>
+                    </Table.Row>
+                  )}
+                </Table.Body>
+              </Table>
+            </div>
+          </div>
         </div>
-      </div>
 
-      {/* Sticky pagination bar (right side only) */}
-      <div className="sticky bottom-0 z-20 mt-4 border-t border-secondary bg-primary">
+      {/* Pagination bar (fixed within the right side; does not scroll with the table) */}
+      <div className="shrink-0 mt-4 border-t border-secondary bg-primary">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between gap-3">
             <Pagination.Root page={page} total={10} onPageChange={setPage}>
@@ -329,6 +330,7 @@ export default function ArticlesPage() {
             </Dropdown.Root>
           </div>
         </div>
+      </div>
       </div>
     </ContentPageLayout>
   )
