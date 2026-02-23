@@ -111,7 +111,16 @@ const TableRoot = ({ className, size = "md", ...props }: TableRootProps) => {
     return (
         <TableContext.Provider value={{ size: context?.size ?? size }}>
             <div className="overflow-x-auto">
-                <AriaTable className={(state) => cx("w-full overflow-x-hidden", typeof className === "function" ? className(state) : className)} {...props} />
+                <AriaTable
+                    className={(state) =>
+                        cx(
+                            // border-separate is important for sticky headers in some browsers.
+                            "relative w-full border-separate border-spacing-0 overflow-x-hidden",
+                            typeof className === "function" ? className(state) : className,
+                        )
+                    }
+                    {...props}
+                />
             </div>
         </TableContext.Provider>
     );
@@ -133,11 +142,12 @@ const TableHeader = <T extends object>({ columns, children, bordered = true, cla
             {...props}
             className={(state) =>
                 cx(
-                    "relative bg-secondary",
+                    // Sticky header when table is in a scroll container.
+                    "sticky top-0 z-20 bg-secondary",
                     size === "sm" ? "h-9" : "h-11",
 
-                    // Sticky header when table is in a scroll container.
-                    "[&>tr>th]:sticky [&>tr>th]:top-0 [&>tr>th]:z-10 [&>tr>th]:bg-secondary", 
+                    // Ensure header cells stay above body rows.
+                    "[&>tr>th]:z-20", 
 
                     // Row border—using an "after" pseudo-element to avoid the border taking up space.
                     bordered &&
