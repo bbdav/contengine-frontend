@@ -49,10 +49,10 @@ export function ContentPageLayout({
     return (
         <div className="w-full">
             {/* Header wrapper (top bar + optional header content) */}
-            <div className="w-full border-b border-secondary">
+            <div className="w-full">
                 <div className="mx-auto w-full max-w-container">
                     {/* Top bar */}
-                    <div className="flex h-[60px] items-center justify-between">
+                    <div className="flex h-[60px] items-center justify-between border-b border-secondary">
                         <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
                         <div className="shrink-0 px-6 py-3">{topRightActions ?? <DefaultTopRightActions />}</div>
                     </div>
