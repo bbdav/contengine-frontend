@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { useMobileNav } from "@/layout/MobileNavContext";
 import {
+  ArrowLeft,
   ChevronDown,
   ChevronUp,
   CodeSquare02,
@@ -175,6 +177,7 @@ function SectionHeader({
 
 export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "drawer" } = {}) {
   const activeUrl = window.location.pathname;
+  const mobileNav = useMobileNav();
 
   // Left rail (universal)
   const topRailItems = useMemo(
@@ -200,6 +203,15 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
       ],
     []
   );
+
+  // Mobile drawer: 2-level navigation state
+  const [drawerLevel, setDrawerLevel] = useState<"root" | "content">("root")
+
+  useEffect(() => {
+    if (mode !== "drawer") return
+    // Reset to level 1 each time the drawer opens (mount).
+    setDrawerLevel("root")
+  }, [mode])
 
   // Right panel (content sub-nav)
   const [collectionsOpen, setCollectionsOpen] = useState(true);
@@ -233,6 +245,208 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
 
   const panelWidth = isDrawer ? PANEL_WIDTH : isDesktop && isPanelOpen ? PANEL_WIDTH : 0;
   const totalWidth = isDrawer ? PANEL_WIDTH : RAIL_WIDTH + panelWidth;
+
+  // Drawer renders its own 2-level nav (no rail).
+  if (isDrawer) {
+    return (
+      <div className="h-screen w-[300px] bg-tertiary">
+        <div className="relative h-full overflow-hidden">
+          <div
+            className="flex h-full w-[600px] transition-transform duration-200 ease-out"
+            style={{ transform: `translateX(${drawerLevel === "root" ? 0 : -PANEL_WIDTH}px)` }}
+          >
+            {/* Level 1 */}
+            <div className="h-full w-[300px]">
+              <div className="flex h-[60px] items-center border-b border-secondary px-4">
+                <h2 className="text-lg font-semibold text-primary">Menu</h2>
+              </div>
+
+              <nav className="px-2 py-3">
+                <ul className="flex flex-col gap-0.5">
+                  {topRailItems.map((item) => (
+                    <li key={item.href}>
+                      <button
+                        type="button"
+                        className={cx(
+                          "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-semibold text-secondary hover:bg-primary_hover",
+                          activeUrl === item.href && "bg-primary_hover",
+                        )}
+                        onClick={() => {
+                          if (item.href === "/content") {
+                            setDrawerLevel("content")
+                          } else {
+                            window.location.pathname = item.href
+                            mobileNav.close()
+                          }
+                        }}
+                      >
+                        <item.icon className="size-5 text-fg-quaternary" />
+                        {item.label}
+                      </button>
+                    </li>
+                  ))}
+
+                  <li className="my-1">
+                    <div className="h-px w-full bg-border-secondary" />
+                  </li>
+
+                  {bottomRailItems.map((item) => (
+                    <li key={item.href}>
+                      <button
+                        type="button"
+                        className={cx(
+                          "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm font-semibold text-secondary hover:bg-primary_hover",
+                          activeUrl === item.href && "bg-primary_hover",
+                        )}
+                        onClick={() => {
+                          window.location.pathname = item.href
+                          mobileNav.close()
+                        }}
+                      >
+                        <item.icon className="size-5 text-fg-quaternary" />
+                        {item.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+
+            {/* Level 2: Content */}
+            <div className="h-full w-[300px]">
+              {/* Fixed header (title + back) */}
+              <div className="flex h-[60px] items-center border-b border-secondary px-3">
+                <button
+                  type="button"
+                  onClick={() => setDrawerLevel("root")}
+                  className="mr-2 flex size-9 items-center justify-center rounded-md text-tertiary hover:bg-primary_hover"
+                  aria-label="Back"
+                >
+                  <ArrowLeft className="size-5" />
+                </button>
+                <h2 className="text-lg font-semibold text-primary">Content</h2>
+              </div>
+
+              {/* Fixed search */}
+              <div className="px-4 pt-4">
+                <Input shortcut size="sm" aria-label="Search" placeholder="Search" />
+              </div>
+
+              {/* Scrollable menu */}
+              <div className="mt-4 min-h-0 flex-1 overflow-y-auto pb-4">
+                <SectionHeader label="Collections" isOpen={collectionsOpen} onToggle={() => setCollectionsOpen((v) => !v)} />
+                {collectionsOpen ? (
+                  <ul className="mt-2 px-3">
+                    <li className="py-0.5">
+                      <NavItemBase
+                        type="link"
+                        href="/content/collections/articles"
+                        current={activeUrl === "/content/collections/articles" || activeUrl.startsWith("/articles")}
+                        icon={() => <Dot className="mr-2 text-success-500" size="sm" />}
+                        badge={pill(7)}
+                        onClick={() => mobileNav.close()}
+                      >
+                        Articles
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/collections/authors" current={activeUrl === "/content/collections/authors"} badge={pill(9)}
+                        onClick={() => mobileNav.close()}>
+                        Authors
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/collections/categories" current={activeUrl === "/content/collections/categories"} badge={pill(23)}
+                        onClick={() => mobileNav.close()}>
+                        Categories
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/collections/products" current={activeUrl === "/content/collections/products"} badge={pill(21)}
+                        onClick={() => mobileNav.close()}>
+                        Products
+                      </NavItemBase>
+                    </li>
+                  </ul>
+                ) : null}
+
+                <SectionHeader label="Singletons" isOpen={singletonsOpen} onToggle={() => setSingletonsOpen((v) => !v)} />
+                {singletonsOpen ? (
+                  <ul className="mt-2 px-3">
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/singletons/homepage" current={activeUrl === "/content/singletons/homepage"}
+                        onClick={() => mobileNav.close()}>
+                        Homepage
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/singletons/about" current={activeUrl === "/content/singletons/about"}
+                        onClick={() => mobileNav.close()}>
+                        About Page
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/singletons/privacy" current={activeUrl === "/content/singletons/privacy"}
+                        onClick={() => mobileNav.close()}>
+                        Privacy Policy
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/singletons/terms" current={activeUrl === "/content/singletons/terms"}
+                        onClick={() => mobileNav.close()}>
+                        Terms & Conditions
+                      </NavItemBase>
+                    </li>
+                  </ul>
+                ) : null}
+
+                <SectionHeader label="Blocks" isOpen={blocksOpen} onToggle={() => setBlocksOpen((v) => !v)} />
+                {blocksOpen ? (
+                  <ul className="mt-2 px-3">
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/blocks/hero" current={activeUrl === "/content/blocks/hero"}
+                        onClick={() => mobileNav.close()}>
+                        Hero Section
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/blocks/testimonial" current={activeUrl === "/content/blocks/testimonial"}
+                        onClick={() => mobileNav.close()}>
+                        Testimonial Block
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/blocks/gallery" current={activeUrl === "/content/blocks/gallery"}
+                        onClick={() => mobileNav.close()}>
+                        Gallery Block
+                      </NavItemBase>
+                    </li>
+                    <li className="py-0.5">
+                      <NavItemBase type="link" href="/content/blocks/faq" current={activeUrl === "/content/blocks/faq"}
+                        onClick={() => mobileNav.close()}>
+                        FAQ Block
+                      </NavItemBase>
+                    </li>
+                  </ul>
+                ) : null}
+              </div>
+
+              {/* Footer */}
+              <div className="px-4 pb-5">
+                <Button color="secondary" size="sm" iconLeading={Plus} className="w-full justify-center">
+                  Add New
+                </Button>
+
+                <div className="mt-4">
+                  <NavAccountCard />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div
@@ -346,17 +560,20 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/collections/authors" current={activeUrl === "/content/collections/authors"} badge={pill(9)}>
+                <NavItemBase type="link" href="/content/collections/authors" current={activeUrl === "/content/collections/authors"} badge={pill(9)}
+                        onClick={() => mobileNav.close()}>
                   Authors
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/collections/categories" current={activeUrl === "/content/collections/categories"} badge={pill(23)}>
+                <NavItemBase type="link" href="/content/collections/categories" current={activeUrl === "/content/collections/categories"} badge={pill(23)}
+                        onClick={() => mobileNav.close()}>
                   Categories
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/collections/products" current={activeUrl === "/content/collections/products"} badge={pill(21)}>
+                <NavItemBase type="link" href="/content/collections/products" current={activeUrl === "/content/collections/products"} badge={pill(21)}
+                        onClick={() => mobileNav.close()}>
                   Products
                 </NavItemBase>
               </li>
@@ -367,22 +584,26 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
           {singletonsOpen ? (
             <ul className="mt-2 px-3">
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/singletons/homepage" current={activeUrl === "/content/singletons/homepage"}>
+                <NavItemBase type="link" href="/content/singletons/homepage" current={activeUrl === "/content/singletons/homepage"}
+                        onClick={() => mobileNav.close()}>
                   Homepage
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/singletons/about" current={activeUrl === "/content/singletons/about"}>
+                <NavItemBase type="link" href="/content/singletons/about" current={activeUrl === "/content/singletons/about"}
+                        onClick={() => mobileNav.close()}>
                   About Page
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/singletons/privacy" current={activeUrl === "/content/singletons/privacy"}>
+                <NavItemBase type="link" href="/content/singletons/privacy" current={activeUrl === "/content/singletons/privacy"}
+                        onClick={() => mobileNav.close()}>
                   Privacy Policy
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/singletons/terms" current={activeUrl === "/content/singletons/terms"}>
+                <NavItemBase type="link" href="/content/singletons/terms" current={activeUrl === "/content/singletons/terms"}
+                        onClick={() => mobileNav.close()}>
                   Terms & Conditions
                 </NavItemBase>
               </li>
@@ -393,22 +614,26 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
           {blocksOpen ? (
             <ul className="mt-2 px-3">
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/blocks/hero" current={activeUrl === "/content/blocks/hero"}>
+                <NavItemBase type="link" href="/content/blocks/hero" current={activeUrl === "/content/blocks/hero"}
+                        onClick={() => mobileNav.close()}>
                   Hero Section
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/blocks/testimonial" current={activeUrl === "/content/blocks/testimonial"}>
+                <NavItemBase type="link" href="/content/blocks/testimonial" current={activeUrl === "/content/blocks/testimonial"}
+                        onClick={() => mobileNav.close()}>
                   Testimonial Block
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/blocks/gallery" current={activeUrl === "/content/blocks/gallery"}>
+                <NavItemBase type="link" href="/content/blocks/gallery" current={activeUrl === "/content/blocks/gallery"}
+                        onClick={() => mobileNav.close()}>
                   Gallery Block
                 </NavItemBase>
               </li>
               <li className="py-0.5">
-                <NavItemBase type="link" href="/content/blocks/faq" current={activeUrl === "/content/blocks/faq"}>
+                <NavItemBase type="link" href="/content/blocks/faq" current={activeUrl === "/content/blocks/faq"}
+                        onClick={() => mobileNav.close()}>
                   FAQ Block
                 </NavItemBase>
               </li>
