@@ -335,33 +335,64 @@ export default function ArticlesPage() {
               <Dropdown.Root>
                 <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
                 <Dropdown.Popover className="w-62">
-                  <div className="p-3">
-                    <div className="text-xs font-semibold text-quaternary">Columns</div>
-                    <div className="mt-2 flex flex-col gap-2">
-                      <Checkbox
+                  <div className="py-1">
+                    <div className="px-3 py-2">
+                      <div className="text-xs font-semibold text-quaternary">Columns</div>
+                    </div>
+
+                    <div className="px-1.5">
+                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
+                        <Checkbox
+                          size="sm"
+                          label="Author"
+                          isSelected={visibleColumns.author}
+                          onChange={(v) => setVisibleColumns((s) => ({ ...s, author: v }))}
+                        />
+                      </div>
+                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
+                        <Checkbox
+                          size="sm"
+                          label="Slug"
+                          isSelected={visibleColumns.slug}
+                          onChange={(v) => setVisibleColumns((s) => ({ ...s, slug: v }))}
+                        />
+                      </div>
+                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
+                        <Checkbox
+                          size="sm"
+                          label="Last update"
+                          isSelected={visibleColumns.updated}
+                          onChange={(v) => setVisibleColumns((s) => ({ ...s, updated: v }))}
+                        />
+                      </div>
+                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
+                        <Checkbox
+                          size="sm"
+                          label="Status"
+                          isSelected={visibleColumns.status}
+                          onChange={(v) => setVisibleColumns((s) => ({ ...s, status: v }))}
+                        />
+                      </div>
+                    </div>
+
+                    <Dropdown.Separator />
+
+                    <div className="px-3 py-2">
+                      <Button
+                        color="tertiary"
                         size="sm"
-                        label="Author"
-                        isSelected={visibleColumns.author}
-                        onChange={(v) => setVisibleColumns((s) => ({ ...s, author: v }))}
-                      />
-                      <Checkbox
-                        size="sm"
-                        label="Slug"
-                        isSelected={visibleColumns.slug}
-                        onChange={(v) => setVisibleColumns((s) => ({ ...s, slug: v }))}
-                      />
-                      <Checkbox
-                        size="sm"
-                        label="Last update"
-                        isSelected={visibleColumns.updated}
-                        onChange={(v) => setVisibleColumns((s) => ({ ...s, updated: v }))}
-                      />
-                      <Checkbox
-                        size="sm"
-                        label="Status"
-                        isSelected={visibleColumns.status}
-                        onChange={(v) => setVisibleColumns((s) => ({ ...s, status: v }))}
-                      />
+                        className="w-full justify-start"
+                        onClick={() =>
+                          setVisibleColumns({
+                            author: true,
+                            slug: true,
+                            updated: true,
+                            status: true,
+                          })
+                        }
+                      >
+                        Reset columns
+                      </Button>
                     </div>
                   </div>
                 </Dropdown.Popover>
