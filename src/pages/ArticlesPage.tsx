@@ -142,6 +142,7 @@ export default function ArticlesPage() {
       title="Article"
       hideHeader
       containerClassName="w-full px-0 py-0"
+      headerContainerClassName="w-full"
       headerContent={
         <div className="px-6">
           <div className="mt-4 flex items-start justify-between gap-6">

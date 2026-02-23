@@ -13,6 +13,11 @@ type ContentPageLayoutProps = {
     topRightActions?: ReactNode;
     /** Custom content rendered under the top bar, inside the same header wrapper. */
     headerContent?: ReactNode;
+    /**
+     * Customize the header container wrapper.
+     * Defaults to: "mx-auto w-full max-w-container"
+     */
+    headerContainerClassName?: string;
     /** Hide the default page header (title/subtitle/primary action). */
     hideHeader?: boolean;
     /**
@@ -42,6 +47,7 @@ export function ContentPageLayout({
     primaryAction,
     topRightActions,
     headerContent,
+    headerContainerClassName,
     hideHeader = false,
     containerClassName,
     children,
@@ -50,7 +56,7 @@ export function ContentPageLayout({
         <div className="w-full">
             {/* Header wrapper (top bar + optional header content) */}
             <div className="w-full">
-                <div className="mx-auto w-full max-w-container">
+                <div className={headerContainerClassName ?? "mx-auto w-full max-w-container"}>
                     {/* Top bar */}
                     <div className="flex h-[60px] items-center justify-between border-b border-secondary">
                         <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
