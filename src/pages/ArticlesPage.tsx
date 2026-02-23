@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import type { SortDescriptor } from "react-aria-components"
 import { ArrowLeft, ArrowRight, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
@@ -73,6 +74,7 @@ export default function ArticlesPage() {
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
   const [page, setPage] = useState(1)
   const [language, setLanguage] = useState<Language>(LANGUAGES[0])
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({ column: "updated", direction: "descending" })
 
   const rows = useMemo<Row[]>(
     () => [
@@ -148,6 +150,58 @@ export default function ArticlesPage() {
     if (!q) return rows
     return rows.filter((r) => (r.title + " " + r.slug).toLowerCase().includes(q))
   }, [rows, query])
+
+  const sorted = useMemo(() => {
+    const { column, direction } = sortDescriptor
+    const dir = direction === "descending" ? -1 : 1
+
+    const statusRank: Record<Status, number> = {
+      Draft: 1,
+      "In Review": 2,
+      "Revision required": 3,
+      "Ready to Publish": 4,
+      Published: 5,
+    }
+
+    const toTime = (s: string) => {
+      // Example values are like "Jan 4, 2025".
+      const t = Date.parse(s)
+      return Number.isFinite(t) ? t : 0
+    }
+
+    return [...filtered].sort((a, b) => {
+      let av: string | number = ""
+      let bv: string | number = ""
+
+      switch (column) {
+        case "title":
+          av = a.title
+          bv = b.title
+          break
+        case "author":
+          av = a.author
+          bv = b.author
+          break
+        case "slug":
+          av = a.slug
+          bv = b.slug
+          break
+        case "updated":
+          av = toTime(a.updated)
+          bv = toTime(b.updated)
+          break
+        case "status":
+          av = statusRank[a.status]
+          bv = statusRank[b.status]
+          break
+        default:
+          return 0
+      }
+
+      if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir
+      return String(av).localeCompare(String(bv)) * dir
+    })
+  }, [filtered, sortDescriptor])
 
   // Table selection is handled by react-aria-components.
   // We keep `selectedKeys` controlled so we can read/use it later.
@@ -242,11 +296,13 @@ export default function ArticlesPage() {
               <Table
                 aria-label="Articles"
                 selectionMode="multiple"
+                sortDescriptor={sortDescriptor}
+                onSortChange={setSortDescriptor}
                 selectedKeys={selectedKeys}
                 onSelectionChange={(keys) => {
                   // react-aria can pass "all" or a Set.
                   if (keys === "all") {
-                    setSelectedKeys(new Set(filtered.map((r) => r.id)))
+                    setSelectedKeys(new Set(sorted.map((r) => r.id)))
                   } else {
                     setSelectedKeys(new Set(Array.from(keys as Set<string>).map(String)))
                   }
@@ -254,14 +310,14 @@ export default function ArticlesPage() {
               >
                 <Table.Header>
                   <Table.Head id="title" label="Title" allowsSorting />
-                  <Table.Head id="author" label="Author" className="w-[120px]" />
-                  <Table.Head id="slug" label="Slug" className="w-[260px]" />
-                  <Table.Head id="updated" label="Last update" className="w-[160px]" />
-                  <Table.Head id="status" label="Status" className="w-[180px]" />
+                  <Table.Head id="author" label="Author" className="w-[120px]" allowsSorting />
+                  <Table.Head id="slug" label="Slug" className="w-[260px]" allowsSorting />
+                  <Table.Head id="updated" label="Last update" className="w-[160px]" allowsSorting />
+                  <Table.Head id="status" label="Status" className="w-[180px]" allowsSorting />
                   <Table.Head id="actions" className="w-[56px]" />
                 </Table.Header>
 
-                <Table.Body items={filtered}>
+                <Table.Body items={sorted}>
                   {(r: Row) => (
                     <Table.Row id={r.id}>
                       <Table.Cell>
