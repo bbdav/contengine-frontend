@@ -142,12 +142,15 @@ const TableHeader = <T extends object>({ columns, children, bordered = true, cla
             {...props}
             className={(state) =>
                 cx(
-                    // Sticky header when table is in a scroll container.
-                    "sticky top-0 z-20 bg-secondary",
+                    "relative bg-secondary",
                     size === "sm" ? "h-9" : "h-11",
 
-                    // Ensure header cells stay above body rows.
-                    "[&>tr>th]:z-20", 
+                    // Sticky header when table is inside a scroll container.
+                    // (thead sticky is flaky across browsers; sticky th is more reliable.)
+                    "[&>tr>th]:sticky [&>tr>th]:top-0 [&>tr>th]:z-20 [&>tr>th]:bg-secondary",
+
+                    // Lift the entire thead above rows as well.
+                    "sticky top-0 z-20",
 
                     // Row border—using an "after" pseudo-element to avoid the border taking up space.
                     bordered &&
