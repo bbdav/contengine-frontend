@@ -131,16 +131,21 @@ export default function ArticlesPage() {
   // We keep `selectedKeys` controlled so we can read/use it later.
 
   return (
-    <ContentPageLayout title="Article" hideHeader containerClassName="w-full px-0 py-0">
-      {/* Breadcrumbs + header */}
+    <ContentPageLayout
+      breadcrumbs={
+        <Breadcrumbs type="button">
+          <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
+          <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
+        </Breadcrumbs>
+      }
+      title="Article"
+      hideHeader
+      containerClassName="w-full px-0 py-0"
+    >
+      {/* Header */}
       <div className="px-6 py-6">
         <div className="flex flex-col gap-4">
-          <Breadcrumbs type="button">
-            <Breadcrumbs.Item href="/content">Content</Breadcrumbs.Item>
-            <Breadcrumbs.Item href="/content/collections">Collections</Breadcrumbs.Item>
-            <Breadcrumbs.Item href="/articles">Article</Breadcrumbs.Item>
-          </Breadcrumbs>
-
           <div className="flex items-start justify-between gap-6">
             <div className="min-w-0">
               <h1 className="text-display-xs font-semibold text-primary">Article</h1>
