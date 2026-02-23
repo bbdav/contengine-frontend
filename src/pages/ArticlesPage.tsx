@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react"
-import { ArrowLeft, ArrowRight, Calendar, ChevronDown, Columns01, FilterLines, SearchLg } from "@untitledui/icons"
+import { ArrowLeft, ArrowRight, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
+import { DateRangePicker } from "@/components/application/date-picker/date-range-picker"
 import { Pagination } from "@/components/application/pagination/pagination-base"
 import { Table } from "@/components/application/table/table"
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group"
@@ -181,9 +182,7 @@ export default function ArticlesPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button color="secondary" size="md" iconLeading={Calendar}>
-                Jan 10, 2025 – Jan 16, 2025
-              </Button>
+              <DateRangePicker />
 
               <Button color="secondary" size="md" iconLeading={FilterLines}>
                 <span className="inline-flex items-center gap-2">
@@ -194,7 +193,7 @@ export default function ArticlesPage() {
                 </span>
               </Button>
 
-              <ButtonUtility icon={Columns01} tooltip="Columns" size="md" />
+              <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
 
               <Dropdown.Root>
                 <Button color="secondary" size="md">
