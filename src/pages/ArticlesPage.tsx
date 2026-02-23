@@ -164,7 +164,8 @@ export default function ArticlesPage() {
       }
     >
       {/* Controls + table */}
-      <div className="px-6 pb-10">
+      {/* pb accounts for fixed pagination height (64px) + 16px gap */}
+      <div className="px-6 pb-[80px]">
         <div className="mt-4">
           {/* Controls */}
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -275,8 +276,14 @@ export default function ArticlesPage() {
         </Table>
       </div>
 
-          {/* Footer controls */}
-          <div className="mt-6 flex items-center justify-between gap-3">
+          {/* Pagination is fixed at the bottom of the page. (See below) */}
+        </div>
+      </div>
+
+      {/* Fixed pagination bar */}
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-secondary bg-primary">
+        <div className="px-6 py-3">
+          <div className="flex items-center justify-between gap-3">
             <Pagination.Root page={page} total={10} onPageChange={setPage}>
               <Pagination.Context>
                 {({ pages }) => (
