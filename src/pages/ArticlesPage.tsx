@@ -63,15 +63,31 @@ function TruncatedText({ text, className }: { text: string; className: string })
       setIsTruncated(el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)
     }
 
+    // Run a few times to catch late font/layout changes.
     update()
+    const raf1 = requestAnimationFrame(update)
+    const raf2 = requestAnimationFrame(update)
+    const t = window.setTimeout(update, 150)
+
+    // Also update when fonts finish loading (line-clamp can change then).
+    const fontsReady = (document as any).fonts?.ready
+    if (fontsReady?.then) {
+      fontsReady.then(() => update()).catch(() => {})
+    }
 
     const ro = new ResizeObserver(() => update())
     ro.observe(el)
-    return () => ro.disconnect()
+
+    return () => {
+      cancelAnimationFrame(raf1)
+      cancelAnimationFrame(raf2)
+      window.clearTimeout(t)
+      ro.disconnect()
+    }
   }, [text])
 
   const content = (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} data-truncated={isTruncated ? "true" : "false"}>
       {text}
     </div>
   )
