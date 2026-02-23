@@ -136,6 +136,9 @@ const TableHeader = <T extends object>({ columns, children, bordered = true, cla
                     "relative bg-secondary",
                     size === "sm" ? "h-9" : "h-11",
 
+                    // Sticky header when table is in a scroll container.
+                    "[&>tr>th]:sticky [&>tr>th]:top-0 [&>tr>th]:z-10 [&>tr>th]:bg-secondary", 
+
                     // Row border—using an "after" pseudo-element to avoid the border taking up space.
                     bordered &&
                         "[&>tr>th]:after:pointer-events-none [&>tr>th]:after:absolute [&>tr>th]:after:inset-x-0 [&>tr>th]:after:bottom-0 [&>tr>th]:after:h-px [&>tr>th]:after:bg-border-secondary [&>tr>th]:focus-visible:after:bg-transparent",
