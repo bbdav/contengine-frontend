@@ -164,8 +164,7 @@ export default function ArticlesPage() {
       }
     >
       {/* Controls + table */}
-      {/* pb accounts for fixed pagination height (64px) + 16px gap */}
-      <div className="px-6 pb-[80px]">
+      <div className="px-6 pb-6">
         <div className="mt-4">
           {/* Controls */}
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -280,9 +279,9 @@ export default function ArticlesPage() {
         </div>
       </div>
 
-      {/* Fixed pagination bar */}
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-secondary bg-primary">
-        <div className="px-6 py-3">
+      {/* Sticky pagination bar (right side only) */}
+      <div className="sticky bottom-0 z-20 mt-4 border-t border-secondary bg-primary">
+        <div className="py-3">
           <div className="flex items-center justify-between gap-3">
             <Pagination.Root page={page} total={10} onPageChange={setPage}>
               <Pagination.Context>
