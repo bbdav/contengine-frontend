@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
+import { useHotkeys } from "react-hotkeys-hook"
 import type { SortDescriptor } from "react-aria-components"
 import { ArrowLeft, ArrowRight, Check, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
@@ -92,6 +93,16 @@ function StatusPill({ status }: { status: Status }) {
 
 export default function ArticlesPage() {
   const [query, setQuery] = useState("")
+  const searchRef = useRef<HTMLInputElement>(null)
+
+  useHotkeys(
+    "meta+k, ctrl+k",
+    (e) => {
+      e.preventDefault()
+      searchRef.current?.focus()
+    },
+    { enableOnFormTags: true }
+  )
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
   const [page, setPage] = useState(1)
   const [language, setLanguage] = useState<Language>(LANGUAGES[0])
@@ -314,6 +325,7 @@ export default function ArticlesPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="w-full max-w-md">
               <Input
+                ref={searchRef}
                 shortcut
                 size="sm"
                 placeholder="Search"
