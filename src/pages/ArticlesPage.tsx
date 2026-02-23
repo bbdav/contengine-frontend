@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import type { SortDescriptor } from "react-aria-components"
-import { ArrowLeft, ArrowRight, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
@@ -12,7 +12,6 @@ import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/but
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges"
 import { Button } from "@/components/base/buttons/button"
 import { ButtonUtility } from "@/components/base/buttons/button-utility"
-import { Checkbox } from "@/components/base/checkbox/checkbox"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip"
@@ -44,6 +43,11 @@ const AUTHOR_AVATARS = [
 ]
 
 const pickAuthorAvatar = (name: string) => AUTHOR_AVATARS[name.charCodeAt(0) % AUTHOR_AVATARS.length]
+
+const makeCheckedIcon = (checked: boolean) =>
+  function CheckedIcon({ className }: { className?: string }) {
+    return <Check className={(className ?? "") + (checked ? "" : " opacity-0")} />
+  }
 
 type Language = {
   code: "en" | "fr" | "es"
@@ -334,55 +338,41 @@ export default function ArticlesPage() {
 
               <Dropdown.Root>
                 <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
-                <Dropdown.Popover className="w-62">
-                  <div className="py-1">
-                    <div className="px-3 py-2">
-                      <div className="text-xs font-semibold text-quaternary">Columns</div>
-                    </div>
+                <Dropdown.Popover>
+                  <div className="border-b border-secondary p-3">
+                    <div className="text-sm font-semibold text-secondary">Columns</div>
+                  </div>
 
-                    <div className="px-1.5">
-                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
-                        <Checkbox
-                          size="sm"
-                          label="Author"
-                          isSelected={visibleColumns.author}
-                          onChange={(v) => setVisibleColumns((s) => ({ ...s, author: v }))}
-                        />
-                      </div>
-                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
-                        <Checkbox
-                          size="sm"
-                          label="Slug"
-                          isSelected={visibleColumns.slug}
-                          onChange={(v) => setVisibleColumns((s) => ({ ...s, slug: v }))}
-                        />
-                      </div>
-                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
-                        <Checkbox
-                          size="sm"
-                          label="Last update"
-                          isSelected={visibleColumns.updated}
-                          onChange={(v) => setVisibleColumns((s) => ({ ...s, updated: v }))}
-                        />
-                      </div>
-                      <div className="rounded-md px-1.5 py-1 hover:bg-primary_hover">
-                        <Checkbox
-                          size="sm"
-                          label="Status"
-                          isSelected={visibleColumns.status}
-                          onChange={(v) => setVisibleColumns((s) => ({ ...s, status: v }))}
-                        />
-                      </div>
-                    </div>
+                  <Dropdown.Menu selectionMode="multiple" disallowEmptySelection={false}>
+                    <Dropdown.Section>
+                      <Dropdown.Item
+                        icon={makeCheckedIcon(visibleColumns.author)}
+                        label="Author"
+                        onAction={() => setVisibleColumns((s) => ({ ...s, author: !s.author }))}
+                      />
+                      <Dropdown.Item
+                        icon={makeCheckedIcon(visibleColumns.slug)}
+                        label="Slug"
+                        onAction={() => setVisibleColumns((s) => ({ ...s, slug: !s.slug }))}
+                      />
+                      <Dropdown.Item
+                        icon={makeCheckedIcon(visibleColumns.updated)}
+                        label="Last update"
+                        onAction={() => setVisibleColumns((s) => ({ ...s, updated: !s.updated }))}
+                      />
+                      <Dropdown.Item
+                        icon={makeCheckedIcon(visibleColumns.status)}
+                        label="Status"
+                        onAction={() => setVisibleColumns((s) => ({ ...s, status: !s.status }))}
+                      />
+                    </Dropdown.Section>
 
                     <Dropdown.Separator />
 
-                    <div className="px-3 py-2">
-                      <Button
-                        color="tertiary"
-                        size="sm"
-                        className="w-full justify-start"
-                        onClick={() =>
+                    <Dropdown.Section>
+                      <Dropdown.Item
+                        label="Reset columns"
+                        onAction={() =>
                           setVisibleColumns({
                             author: true,
                             slug: true,
@@ -390,11 +380,9 @@ export default function ArticlesPage() {
                             status: true,
                           })
                         }
-                      >
-                        Reset columns
-                      </Button>
-                    </div>
-                  </div>
+                      />
+                    </Dropdown.Section>
+                  </Dropdown.Menu>
                 </Dropdown.Popover>
               </Dropdown.Root>
 

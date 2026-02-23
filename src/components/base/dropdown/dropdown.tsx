@@ -91,13 +91,18 @@ const DropdownItem = ({ label, children, addon, icon: Icon, unstyled, ...props }
 interface DropdownMenuProps<T extends object> extends AriaMenuProps<T> {}
 
 const DropdownMenu = <T extends object>(props: DropdownMenuProps<T>) => {
+    const { disallowEmptySelection = true, selectionMode = "single", ...rest } = props as DropdownMenuProps<T> & {
+        disallowEmptySelection?: boolean;
+        selectionMode?: AriaMenuProps<T>["selectionMode"];
+    };
+
     return (
         <AriaMenu
-            disallowEmptySelection
-            selectionMode="single"
-            {...props}
+            disallowEmptySelection={disallowEmptySelection}
+            selectionMode={selectionMode}
+            {...rest}
             className={(state) =>
-                cx("h-min overflow-y-auto py-1 outline-hidden select-none", typeof props.className === "function" ? props.className(state) : props.className)
+                cx("h-min overflow-y-auto py-1 outline-hidden select-none", typeof rest.className === "function" ? rest.className(state) : rest.className)
             }
         />
     );
