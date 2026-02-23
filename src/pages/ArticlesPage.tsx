@@ -25,7 +25,9 @@ type Row = {
 }
 
 const InReviewIcon = ({ className }: { className?: string }) => <CircleHalf className={className} weight="fill" />
+const ReadyToPublishIcon = ({ className }: { className?: string }) => <RocketLaunch className={className} weight="fill" />
 const PublishedIcon = ({ className }: { className?: string }) => <CheckCircle className={className} weight="fill" />
+const RevisionRequiredIcon = ({ className }: { className?: string }) => <HighlighterCircle className={className} weight="fill" />
 
 function StatusPill({ status }: { status: Status }) {
   const badge =
@@ -34,10 +36,10 @@ function StatusPill({ status }: { status: Status }) {
       : status === "In Review"
       ? { color: "warning" as const, icon: InReviewIcon }
       : status === "Ready to Publish"
-      ? { color: "blue" as const, icon: RocketLaunch }
+      ? { color: "blue" as const, icon: ReadyToPublishIcon }
       : status === "Published"
       ? { color: "success" as const, icon: PublishedIcon }
-      : { color: "error" as const, icon: HighlighterCircle }
+      : { color: "error" as const, icon: RevisionRequiredIcon }
 
   return (
     <BadgeWithIcon type="pill-color" size="sm" color={badge.color} iconLeading={badge.icon}>
