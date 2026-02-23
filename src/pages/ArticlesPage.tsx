@@ -24,16 +24,19 @@ type Row = {
   selected?: boolean
 }
 
+const InReviewIcon = ({ className }: { className?: string }) => <CircleHalf className={className} weight="fill" />
+const PublishedIcon = ({ className }: { className?: string }) => <CheckCircle className={className} weight="fill" />
+
 function StatusPill({ status }: { status: Status }) {
   const badge =
     status === "Draft"
       ? { color: "gray" as const, icon: CircleDashed }
       : status === "In Review"
-      ? { color: "warning" as const, icon: CircleHalf }
+      ? { color: "warning" as const, icon: InReviewIcon }
       : status === "Ready to Publish"
       ? { color: "blue" as const, icon: RocketLaunch }
       : status === "Published"
-      ? { color: "success" as const, icon: CheckCircle }
+      ? { color: "success" as const, icon: PublishedIcon }
       : { color: "error" as const, icon: HighlighterCircle }
 
   return (
