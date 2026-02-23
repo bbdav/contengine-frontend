@@ -50,6 +50,43 @@ const makeCheckedIcon = (checked: boolean) =>
     return <Check className={(className ?? "") + (checked ? "" : " opacity-0")} />
   }
 
+function TruncatedText({ text, className }: { text: string; className: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [isTruncated, setIsTruncated] = useState(false)
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const update = () => {
+      // Works for both single-line truncation and line-clamp.
+      setIsTruncated(el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)
+    }
+
+    update()
+
+    const ro = new ResizeObserver(() => update())
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [text])
+
+  const content = (
+    <div ref={ref} className={className}>
+      {text}
+    </div>
+  )
+
+  if (!isTruncated) return content
+
+  return (
+    <Tooltip title={text} placement="top">
+      <TooltipTrigger className="block w-full text-left">
+        {content}
+      </TooltipTrigger>
+    </Tooltip>
+  )
+}
+
 type Language = {
   code: "en" | "fr" | "es"
   label: string
@@ -486,8 +523,8 @@ export default function ArticlesPage() {
                     <Table.Row id={r.id}>
                       <Table.Cell>
                         <div>
-                          <div className="font-medium text-primary line-clamp-2">{r.title}</div>
-                          <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
+                          <TruncatedText text={r.title} className="font-medium text-primary line-clamp-2" />
+                          <TruncatedText text={r.desc} className="text-sm text-tertiary line-clamp-1" />
                         </div>
                       </Table.Cell>
 
@@ -503,7 +540,11 @@ export default function ArticlesPage() {
                         </Table.Cell>
                       ) : null}
 
-                      {visibleColumns.slug ? <Table.Cell className="text-tertiary">{r.slug}</Table.Cell> : null}
+                      {visibleColumns.slug ? (
+                        <Table.Cell className="text-tertiary">
+                          <TruncatedText text={r.slug} className="line-clamp-1" />
+                        </Table.Cell>
+                      ) : null}
                       {visibleColumns.updated ? <Table.Cell className="text-tertiary">{r.updated}</Table.Cell> : null}
 
                       {visibleColumns.status ? (
