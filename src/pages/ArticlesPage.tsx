@@ -565,51 +565,55 @@ export default function ArticlesPage() {
       {/* Pagination bar */}
       <div ref={paginationRef} className="shrink-0 mt-auto border-t border-secondary bg-primary">
         <div className="px-6 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <Pagination.Root page={page} total={10} onPageChange={setPage}>
-              <Pagination.Context>
-                {({ pages }) => (
-                  <ButtonGroup size="md">
-                    <Pagination.PrevTrigger asChild>
-                      <ButtonGroupItem iconLeading={ArrowLeft} aria-label="Previous page" />
-                    </Pagination.PrevTrigger>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="-mx-1 w-full overflow-x-auto px-1 pb-1 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:w-auto sm:overflow-visible sm:px-0 sm:pb-0">
+              <Pagination.Root page={page} total={10} onPageChange={setPage}>
+                <Pagination.Context>
+                  {({ pages }) => (
+                    <ButtonGroup size="sm" className="w-max sm:w-auto">
+                      <Pagination.PrevTrigger asChild>
+                        <ButtonGroupItem iconLeading={ArrowLeft} aria-label="Previous page" />
+                      </Pagination.PrevTrigger>
 
-                    {pages.map((p, index) =>
-                      p.type === "page" ? (
-                        <Pagination.Item key={index} {...p} asChild>
-                          <ButtonGroupItem isSelected={p.isCurrent} className="size-10 items-center justify-center">
-                            {p.value}
-                          </ButtonGroupItem>
-                        </Pagination.Item>
-                      ) : (
-                        <Pagination.Ellipsis key={index}>
-                          <ButtonGroupItem className="pointer-events-none size-10 items-center justify-center rounded-none!">
-                            &#8230;
-                          </ButtonGroupItem>
-                        </Pagination.Ellipsis>
-                      )
-                    )}
+                      {pages.map((p, index) =>
+                        p.type === "page" ? (
+                          <Pagination.Item key={index} {...p} asChild>
+                            <ButtonGroupItem isSelected={p.isCurrent} className="size-9 items-center justify-center sm:size-10">
+                              {p.value}
+                            </ButtonGroupItem>
+                          </Pagination.Item>
+                        ) : (
+                          <Pagination.Ellipsis key={index}>
+                            <ButtonGroupItem className="pointer-events-none size-9 items-center justify-center rounded-none! sm:size-10">
+                              &#8230;
+                            </ButtonGroupItem>
+                          </Pagination.Ellipsis>
+                        )
+                      )}
 
-                    <Pagination.NextTrigger asChild>
-                      <ButtonGroupItem iconLeading={ArrowRight} aria-label="Next page" />
-                    </Pagination.NextTrigger>
-                  </ButtonGroup>
-                )}
-              </Pagination.Context>
-            </Pagination.Root>
+                      <Pagination.NextTrigger asChild>
+                        <ButtonGroupItem iconLeading={ArrowRight} aria-label="Next page" />
+                      </Pagination.NextTrigger>
+                    </ButtonGroup>
+                  )}
+                </Pagination.Context>
+              </Pagination.Root>
+            </div>
 
-            <Dropdown.Root>
-              <Button color="tertiary" className="text-tertiary" iconTrailing={ChevronDown}>
-                View 25
-              </Button>
-              <Dropdown.Popover className="w-min">
-                <Dropdown.Menu>
-                  <Dropdown.Item label="View 10" />
-                  <Dropdown.Item label="View 25" />
-                  <Dropdown.Item label="View 50" />
-                </Dropdown.Menu>
-              </Dropdown.Popover>
-            </Dropdown.Root>
+            <div className="hidden sm:block">
+              <Dropdown.Root>
+                <Button color="tertiary" className="text-tertiary" iconTrailing={ChevronDown}>
+                  View 25
+                </Button>
+                <Dropdown.Popover className="w-min">
+                  <Dropdown.Menu>
+                    <Dropdown.Item label="View 10" />
+                    <Dropdown.Item label="View 25" />
+                    <Dropdown.Item label="View 50" />
+                  </Dropdown.Menu>
+                </Dropdown.Popover>
+              </Dropdown.Root>
+            </div>
           </div>
         </div>
       </div>
