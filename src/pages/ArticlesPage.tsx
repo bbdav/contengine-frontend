@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { useHotkeys } from "react-hotkeys-hook"
 import type { SortDescriptor } from "react-aria-components"
 import { ArrowLeft, ArrowRight, Check, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
@@ -94,6 +94,10 @@ function StatusPill({ status }: { status: Status }) {
 export default function ArticlesPage() {
   const [query, setQuery] = useState("")
   const searchRef = useRef<HTMLInputElement>(null)
+  const bodyRef = useRef<HTMLDivElement>(null)
+  const tableScrollRef = useRef<HTMLDivElement>(null)
+  const paginationRef = useRef<HTMLDivElement>(null)
+  const [tableMaxHeight, setTableMaxHeight] = useState<number | undefined>(undefined)
 
   useHotkeys(
     "meta+k, ctrl+k",
@@ -103,6 +107,33 @@ export default function ArticlesPage() {
     },
     { enableOnFormTags: true }
   )
+
+  useLayoutEffect(() => {
+    const update = () => {
+      const tableEl = tableScrollRef.current
+      const paginationEl = paginationRef.current
+      if (!tableEl || !paginationEl) return
+
+      const tableTop = tableEl.getBoundingClientRect().top
+      const paginationTop = paginationEl.getBoundingClientRect().top
+      const gap = 16
+      const max = Math.floor(paginationTop - tableTop - gap)
+      setTableMaxHeight(max > 0 ? max : undefined)
+    }
+
+    update()
+
+    const ro = new ResizeObserver(() => update())
+    if (bodyRef.current) ro.observe(bodyRef.current)
+    if (paginationRef.current) ro.observe(paginationRef.current)
+    if (tableScrollRef.current) ro.observe(tableScrollRef.current)
+
+    window.addEventListener("resize", update)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener("resize", update)
+    }
+  }, [])
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
   const [page, setPage] = useState(1)
   const [language, setLanguage] = useState<Language>(LANGUAGES[0])
@@ -319,7 +350,7 @@ export default function ArticlesPage() {
       }
     >
       {/* Body (right side): controls stay visible; table scrolls; pagination stays at the bottom */}
-      <div className="flex h-full flex-col">
+      <div ref={bodyRef} className="flex h-full flex-col">
         {/* Controls */}
         <div className="shrink-0 px-6 pt-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -421,9 +452,10 @@ export default function ArticlesPage() {
           </div>
         </div>
 
-        {/* Table (scrolls) */}
-        <div className="mt-4 flex-1 min-h-0 px-6">
-          <div className="h-full overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
+        {/* Table (scrolls only if it would collide with pagination) */}
+        <div className="mt-4 px-6">
+          <div className="overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
+            <div ref={tableScrollRef} style={{ maxHeight: tableMaxHeight }} className="overflow-auto">
               <Table
                 key={`${visibleColumns.author}-${visibleColumns.slug}-${visibleColumns.updated}-${visibleColumns.status}`}
                 aria-label="Articles"
@@ -497,11 +529,12 @@ export default function ArticlesPage() {
                   )}
                 </Table.Body>
               </Table>
+            </div>
           </div>
         </div>
 
-      {/* Pagination bar (fixed within the right side; does not scroll with the table) */}
-      <div className="shrink-0 mt-4 border-t border-secondary bg-primary">
+      {/* Pagination bar */}
+      <div ref={paginationRef} className="shrink-0 mt-auto border-t border-secondary bg-primary">
         <div className="px-6 py-3">
           <div className="flex items-center justify-between gap-3">
             <Pagination.Root page={page} total={10} onPageChange={setPage}>
