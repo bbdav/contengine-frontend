@@ -12,6 +12,7 @@ import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/but
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges"
 import { Button } from "@/components/base/buttons/button"
 import { ButtonUtility } from "@/components/base/buttons/button-utility"
+import { Checkbox } from "@/components/base/checkbox/checkbox"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip"
@@ -24,7 +25,8 @@ type Row = {
   title: string
   desc: string
   authorName: string
-  authorAvatarUrl: string
+  authorAvatarUrl?: string | null
+  authorInitials?: string
   slug: string
   updated: string
   status: Status
@@ -91,6 +93,12 @@ export default function ArticlesPage() {
   const [language, setLanguage] = useState<Language>(LANGUAGES[0])
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({ column: "updated", direction: "descending" })
 
+  const [visibleColumns, setVisibleColumns] = useState({
+    slug: true,
+    updated: true,
+    status: true,
+  })
+
   const rows = useMemo<Row[]>(
     () => [
       {
@@ -98,7 +106,8 @@ export default function ArticlesPage() {
         title: "A bug is becoming a meme on the internet",
         desc: "Maybe the answer is in this article, or not",
         authorName: "Olivia Rhye",
-        authorAvatarUrl: pickAuthorAvatar("Olivia Rhye"),
+        authorInitials: "OR",
+        authorAvatarUrl: null,
         slug: "squirrel-steals-pizza",
         updated: "Jan 4, 2025",
         status: "Draft",
@@ -108,7 +117,8 @@ export default function ArticlesPage() {
         title: "This shrimp is awesome",
         desc: "Mantis shrimps, or stomatopods, are mesmerizing",
         authorName: "Phoenix Baker",
-        authorAvatarUrl: pickAuthorAvatar("Phoenix Baker"),
+        authorInitials: "PB",
+        authorAvatarUrl: null,
         slug: "this-shrimp-is-awesome",
         updated: "Jan 4, 2025",
         status: "In Review",
@@ -287,7 +297,36 @@ export default function ArticlesPage() {
                 </span>
               </Button>
 
-              <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
+              <Dropdown.Root>
+                <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
+                <Dropdown.Popover className="w-62">
+                  <div className="p-3">
+                    <div className="text-xs font-semibold text-quaternary">Columns</div>
+                    <div className="mt-2 flex flex-col gap-2">
+                      <Checkbox isDisabled size="sm" label="Title" isSelected />
+                      <Checkbox isDisabled size="sm" label="Author" isSelected />
+                      <Checkbox
+                        size="sm"
+                        label="Slug"
+                        isSelected={visibleColumns.slug}
+                        onChange={(v) => setVisibleColumns((s) => ({ ...s, slug: v }))}
+                      />
+                      <Checkbox
+                        size="sm"
+                        label="Last update"
+                        isSelected={visibleColumns.updated}
+                        onChange={(v) => setVisibleColumns((s) => ({ ...s, updated: v }))}
+                      />
+                      <Checkbox
+                        size="sm"
+                        label="Status"
+                        isSelected={visibleColumns.status}
+                        onChange={(v) => setVisibleColumns((s) => ({ ...s, status: v }))}
+                      />
+                    </div>
+                  </div>
+                </Dropdown.Popover>
+              </Dropdown.Root>
 
               <Dropdown.Root>
                 <Button color="secondary" size="md" iconLeading={makeFlagIcon(language.flag)} iconTrailing={ChevronDown}>
@@ -333,9 +372,9 @@ export default function ArticlesPage() {
                 <Table.Header>
                   <Table.Head id="title" label="Title" allowsSorting />
                   <Table.Head id="author" label="Author" className="w-[120px]" allowsSorting />
-                  <Table.Head id="slug" label="Slug" className="w-[260px]" allowsSorting />
-                  <Table.Head id="updated" label="Last update" className="w-[160px]" allowsSorting />
-                  <Table.Head id="status" label="Status" className="w-[180px]" allowsSorting />
+                  {visibleColumns.slug ? <Table.Head id="slug" label="Slug" className="w-[260px]" allowsSorting /> : null}
+                  {visibleColumns.updated ? <Table.Head id="updated" label="Last update" className="w-[160px]" allowsSorting /> : null}
+                  {visibleColumns.status ? <Table.Head id="status" label="Status" className="w-[180px]" allowsSorting /> : null}
                   <Table.Head id="actions" className="w-[56px]" />
                 </Table.Header>
 
@@ -353,18 +392,20 @@ export default function ArticlesPage() {
                         <div className="flex items-center gap-2">
                           <Tooltip title={r.authorName} placement="top">
                             <TooltipTrigger>
-                              <Avatar size="sm" src={r.authorAvatarUrl} alt={r.authorName} />
+                              <Avatar size="sm" src={r.authorAvatarUrl ?? undefined} initials={r.authorInitials} alt={r.authorName} />
                             </TooltipTrigger>
                           </Tooltip>
                         </div>
                       </Table.Cell>
 
-                      <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
-                      <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
+                      {visibleColumns.slug ? <Table.Cell className="text-tertiary">{r.slug}</Table.Cell> : null}
+                      {visibleColumns.updated ? <Table.Cell className="text-tertiary">{r.updated}</Table.Cell> : null}
 
-                      <Table.Cell>
-                        <StatusPill status={r.status} />
-                      </Table.Cell>
+                      {visibleColumns.status ? (
+                        <Table.Cell>
+                          <StatusPill status={r.status} />
+                        </Table.Cell>
+                      ) : null}
 
                       <Table.Cell className="text-right">
                         <Dropdown.Root>
