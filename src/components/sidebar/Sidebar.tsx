@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -214,13 +214,27 @@ export default function Sidebar() {
 
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [isRailHovering, setIsRailHovering] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(true);
 
-  const panelWidth = isPanelOpen ? PANEL_WIDTH : 0;
+  useEffect(() => {
+    const update = () => {
+      const desktop = window.matchMedia("(min-width: 1024px)").matches
+      setIsDesktop(desktop)
+      // On mobile, always collapse the panel.
+      if (!desktop) setIsPanelOpen(false)
+    }
+
+    update()
+    window.addEventListener("resize", update)
+    return () => window.removeEventListener("resize", update)
+  }, [])
+
+  const panelWidth = isDesktop && isPanelOpen ? PANEL_WIDTH : 0;
   const totalWidth = RAIL_WIDTH + panelWidth;
 
   return (
     <div
-      className="hidden h-screen shrink-0 lg:flex bg-tertiary transition-[width] duration-200 ease-out"
+      className="flex h-screen shrink-0 bg-tertiary transition-[width] duration-200 ease-out"
       style={{ width: totalWidth }}
     >
       {/* Left rail: no bg, only right-edge ring */}
