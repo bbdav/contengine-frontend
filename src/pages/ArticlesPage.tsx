@@ -184,9 +184,7 @@ export default function ArticlesPage() {
     return rows.filter((r) => (r.title + " " + r.slug).toLowerCase().includes(q))
   }, [rows, query])
 
-  useEffect(() => {
-    // react-aria Table expects sortDescriptor.column to exist in the current columns.
-    // If a sorted column gets hidden, reset sorting to a visible column to avoid runtime crashes.
+  const effectiveSortDescriptor = useMemo<SortDescriptor>(() => {
     const visible: Record<string, boolean> = {
       title: true,
       author: visibleColumns.author,
@@ -195,22 +193,33 @@ export default function ArticlesPage() {
       status: visibleColumns.status,
     }
 
-    if (!visible[String(sortDescriptor.column)]) {
-      const fallback = visibleColumns.updated
-        ? "updated"
-        : visibleColumns.status
-        ? "status"
-        : visibleColumns.slug
-        ? "slug"
-        : visibleColumns.author
-        ? "author"
-        : "title"
-      setSortDescriptor({ column: fallback, direction: "descending" })
+    if (visible[String(sortDescriptor.column)]) return sortDescriptor
+
+    const fallback = visibleColumns.updated
+      ? "updated"
+      : visibleColumns.status
+      ? "status"
+      : visibleColumns.slug
+      ? "slug"
+      : visibleColumns.author
+      ? "author"
+      : "title"
+
+    return { column: fallback, direction: "descending" }
+  }, [sortDescriptor, visibleColumns])
+
+  useEffect(() => {
+    // Keep state in sync so the sort indicators remain correct.
+    if (
+      effectiveSortDescriptor.column !== sortDescriptor.column ||
+      effectiveSortDescriptor.direction !== sortDescriptor.direction
+    ) {
+      setSortDescriptor(effectiveSortDescriptor)
     }
-  }, [sortDescriptor.column, visibleColumns])
+  }, [effectiveSortDescriptor, sortDescriptor.column, sortDescriptor.direction])
 
   const sorted = useMemo(() => {
-    const { column, direction } = sortDescriptor
+    const { column, direction } = effectiveSortDescriptor
     const dir = direction === "descending" ? -1 : 1
 
     const statusRank: Record<Status, number> = {
@@ -259,7 +268,7 @@ export default function ArticlesPage() {
       if (typeof av === "number" && typeof bv === "number") return (av - bv) * dir
       return String(av).localeCompare(String(bv)) * dir
     })
-  }, [filtered, sortDescriptor])
+  }, [filtered, effectiveSortDescriptor])
 
   // Table selection is handled by react-aria-components.
   // We keep `selectedKeys` controlled so we can read/use it later.
@@ -387,7 +396,7 @@ export default function ArticlesPage() {
               <Table
                 aria-label="Articles"
                 selectionMode="multiple"
-                sortDescriptor={sortDescriptor}
+                sortDescriptor={effectiveSortDescriptor}
                 onSortChange={setSortDescriptor}
                 selectedKeys={selectedKeys}
                 onSelectionChange={(keys) => {
