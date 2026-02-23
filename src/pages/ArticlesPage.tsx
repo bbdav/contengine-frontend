@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import type { SortDescriptor } from "react-aria-components"
 import { ArrowLeft, ArrowRight, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
@@ -94,6 +94,7 @@ export default function ArticlesPage() {
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({ column: "updated", direction: "descending" })
 
   const [visibleColumns, setVisibleColumns] = useState({
+    author: true,
     slug: true,
     updated: true,
     status: true,
@@ -182,6 +183,31 @@ export default function ArticlesPage() {
     if (!q) return rows
     return rows.filter((r) => (r.title + " " + r.slug).toLowerCase().includes(q))
   }, [rows, query])
+
+  useEffect(() => {
+    // react-aria Table expects sortDescriptor.column to exist in the current columns.
+    // If a sorted column gets hidden, reset sorting to a visible column to avoid runtime crashes.
+    const visible: Record<string, boolean> = {
+      title: true,
+      author: visibleColumns.author,
+      slug: visibleColumns.slug,
+      updated: visibleColumns.updated,
+      status: visibleColumns.status,
+    }
+
+    if (!visible[String(sortDescriptor.column)]) {
+      const fallback = visibleColumns.updated
+        ? "updated"
+        : visibleColumns.status
+        ? "status"
+        : visibleColumns.slug
+        ? "slug"
+        : visibleColumns.author
+        ? "author"
+        : "title"
+      setSortDescriptor({ column: fallback, direction: "descending" })
+    }
+  }, [sortDescriptor.column, visibleColumns])
 
   const sorted = useMemo(() => {
     const { column, direction } = sortDescriptor
@@ -303,8 +329,12 @@ export default function ArticlesPage() {
                   <div className="p-3">
                     <div className="text-xs font-semibold text-quaternary">Columns</div>
                     <div className="mt-2 flex flex-col gap-2">
-                      <Checkbox isDisabled size="sm" label="Title" isSelected />
-                      <Checkbox isDisabled size="sm" label="Author" isSelected />
+                      <Checkbox
+                        size="sm"
+                        label="Author"
+                        isSelected={visibleColumns.author}
+                        onChange={(v) => setVisibleColumns((s) => ({ ...s, author: v }))}
+                      />
                       <Checkbox
                         size="sm"
                         label="Slug"
@@ -371,7 +401,7 @@ export default function ArticlesPage() {
               >
                 <Table.Header>
                   <Table.Head id="title" label="Title" allowsSorting />
-                  <Table.Head id="author" label="Author" className="w-[120px]" allowsSorting />
+                  {visibleColumns.author ? <Table.Head id="author" label="Author" className="w-[120px]" allowsSorting /> : null}
                   {visibleColumns.slug ? <Table.Head id="slug" label="Slug" className="w-[260px]" allowsSorting /> : null}
                   {visibleColumns.updated ? <Table.Head id="updated" label="Last update" className="w-[160px]" allowsSorting /> : null}
                   {visibleColumns.status ? <Table.Head id="status" label="Status" className="w-[180px]" allowsSorting /> : null}
@@ -388,15 +418,17 @@ export default function ArticlesPage() {
                         </div>
                       </Table.Cell>
 
-                      <Table.Cell>
-                        <div className="flex items-center gap-2">
-                          <Tooltip title={r.authorName} placement="top">
-                            <TooltipTrigger>
-                              <Avatar size="sm" src={r.authorAvatarUrl ?? undefined} initials={r.authorInitials} alt={r.authorName} />
-                            </TooltipTrigger>
-                          </Tooltip>
-                        </div>
-                      </Table.Cell>
+                      {visibleColumns.author ? (
+                        <Table.Cell>
+                          <div className="flex items-center gap-2">
+                            <Tooltip title={r.authorName} placement="top">
+                              <TooltipTrigger>
+                                <Avatar size="sm" src={r.authorAvatarUrl ?? undefined} initials={r.authorInitials} alt={r.authorName} />
+                              </TooltipTrigger>
+                            </Tooltip>
+                          </div>
+                        </Table.Cell>
+                      ) : null}
 
                       {visibleColumns.slug ? <Table.Cell className="text-tertiary">{r.slug}</Table.Cell> : null}
                       {visibleColumns.updated ? <Table.Cell className="text-tertiary">{r.updated}</Table.Cell> : null}
