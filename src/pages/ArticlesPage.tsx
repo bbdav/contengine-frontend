@@ -498,8 +498,21 @@ export default function ArticlesPage() {
                     <Table.Row id={r.id}>
                       <Table.Cell>
                         <div>
-                          <TruncatedText text={r.title} className="font-medium text-primary line-clamp-2" />
-                          <TruncatedText text={r.desc} className="text-sm text-tertiary line-clamp-1" />
+                          <Tooltip
+                            trigger="hover"
+                            placement="top"
+                            title={
+                              <div className="flex flex-col gap-1">
+                                <div className="text-xs font-medium text-white">{r.title}</div>
+                                <div className="text-xs font-normal text-tooltip-supporting-text">{r.desc}</div>
+                              </div>
+                            }
+                          >
+                            <TooltipTrigger className="block w-full text-left">
+                              <div className="font-medium text-primary line-clamp-2">{r.title}</div>
+                              <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
+                            </TooltipTrigger>
+                          </Tooltip>
                         </div>
                       </Table.Cell>
 
