@@ -394,6 +394,7 @@ export default function ArticlesPage() {
         <div className="mt-4 flex-1 min-h-0 px-6">
           <div className="h-full overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
               <Table
+                key={`${visibleColumns.author}-${visibleColumns.slug}-${visibleColumns.updated}-${visibleColumns.status}`}
                 aria-label="Articles"
                 selectionMode="multiple"
                 sortDescriptor={effectiveSortDescriptor}
