@@ -51,53 +51,12 @@ const makeCheckedIcon = (checked: boolean) =>
   }
 
 function TruncatedText({ text, className }: { text: string; className: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [isTruncated, setIsTruncated] = useState(false)
-
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    const update = () => {
-      // Works for both single-line truncation and line-clamp.
-      setIsTruncated(el.scrollHeight > el.clientHeight || el.scrollWidth > el.clientWidth)
-    }
-
-    // Run a few times to catch late font/layout changes.
-    update()
-    const raf1 = requestAnimationFrame(update)
-    const raf2 = requestAnimationFrame(update)
-    const t = window.setTimeout(update, 150)
-
-    // Also update when fonts finish loading (line-clamp can change then).
-    const fontsReady = (document as any).fonts?.ready
-    if (fontsReady?.then) {
-      fontsReady.then(() => update()).catch(() => {})
-    }
-
-    const ro = new ResizeObserver(() => update())
-    ro.observe(el)
-
-    return () => {
-      cancelAnimationFrame(raf1)
-      cancelAnimationFrame(raf2)
-      window.clearTimeout(t)
-      ro.disconnect()
-    }
-  }, [text])
-
-  const content = (
-    <div ref={ref} className={className} data-truncated={isTruncated ? "true" : "false"}>
-      {text}
-    </div>
-  )
-
-  if (!isTruncated) return content
-
+  // We always provide a tooltip with the full text.
+  // This is more reliable than trying to detect CSS line-clamp truncation at runtime.
   return (
     <Tooltip title={text} placement="top" trigger="hover">
       <TooltipTrigger className="block w-full text-left">
-        {content}
+        <div className={className}>{text}</div>
       </TooltipTrigger>
     </Tooltip>
   )
