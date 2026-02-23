@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react"
-import { Calendar, Columns01, FilterLines, SearchLg } from "@untitledui/icons"
+import { ArrowLeft, ArrowRight, Calendar, ChevronDown, Columns01, FilterLines, SearchLg } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
+import { Pagination } from "@/components/application/pagination/pagination-base"
 import { Table } from "@/components/application/table/table"
+import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group"
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges"
 import { Button } from "@/components/base/buttons/button"
 import { ButtonUtility } from "@/components/base/buttons/button-utility"
@@ -51,6 +53,7 @@ function StatusPill({ status }: { status: Status }) {
 export default function ArticlesPage() {
   const [query, setQuery] = useState("")
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
+  const [page, setPage] = useState(1)
 
   const rows = useMemo<Row[]>(
     () => [
@@ -273,10 +276,51 @@ export default function ArticlesPage() {
       </div>
 
           {/* Footer controls */}
-          <div className="mt-6 flex items-center justify-end gap-3">
-            <Button color="tertiary" className="text-tertiary">
-              View 25
-            </Button>
+          <div className="mt-6 flex items-center justify-between gap-3">
+            <Pagination.Root page={page} total={10} onPageChange={setPage}>
+              <Pagination.Context>
+                {({ pages }) => (
+                  <ButtonGroup size="md">
+                    <Pagination.PrevTrigger asChild>
+                      <ButtonGroupItem iconLeading={ArrowLeft} aria-label="Previous page" />
+                    </Pagination.PrevTrigger>
+
+                    {pages.map((p, index) =>
+                      p.type === "page" ? (
+                        <Pagination.Item key={index} {...p} asChild>
+                          <ButtonGroupItem isSelected={p.isCurrent} className="size-10 items-center justify-center">
+                            {p.value}
+                          </ButtonGroupItem>
+                        </Pagination.Item>
+                      ) : (
+                        <Pagination.Ellipsis key={index}>
+                          <ButtonGroupItem className="pointer-events-none size-10 items-center justify-center rounded-none!">
+                            &#8230;
+                          </ButtonGroupItem>
+                        </Pagination.Ellipsis>
+                      )
+                    )}
+
+                    <Pagination.NextTrigger asChild>
+                      <ButtonGroupItem iconLeading={ArrowRight} aria-label="Next page" />
+                    </Pagination.NextTrigger>
+                  </ButtonGroup>
+                )}
+              </Pagination.Context>
+            </Pagination.Root>
+
+            <Dropdown.Root>
+              <Button color="tertiary" className="text-tertiary" iconTrailing={ChevronDown}>
+                View 25
+              </Button>
+              <Dropdown.Popover className="w-min">
+                <Dropdown.Menu>
+                  <Dropdown.Item label="View 10" />
+                  <Dropdown.Item label="View 25" />
+                  <Dropdown.Item label="View 50" />
+                </Dropdown.Menu>
+              </Dropdown.Popover>
+            </Dropdown.Root>
           </div>
         </div>
       </div>
