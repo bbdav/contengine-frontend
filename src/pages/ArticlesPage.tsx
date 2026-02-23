@@ -213,7 +213,6 @@ export default function ArticlesPage() {
         {/* Table (scrolls) */}
         <div className="mt-4 flex-1 min-h-0 px-6">
           <div className="h-full overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
-            <div className="h-full overflow-auto">
               <Table
                 aria-label="Articles"
                 selectionMode="multiple"
@@ -276,7 +275,6 @@ export default function ArticlesPage() {
                   )}
                 </Table.Body>
               </Table>
-            </div>
           </div>
         </div>
 
