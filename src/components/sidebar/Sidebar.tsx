@@ -173,7 +173,7 @@ function SectionHeader({
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "drawer" } = {}) {
   const activeUrl = window.location.pathname;
 
   // Left rail (universal)
@@ -229,15 +229,18 @@ export default function Sidebar() {
     return () => window.removeEventListener("resize", update)
   }, [])
 
-  const panelWidth = isDesktop && isPanelOpen ? PANEL_WIDTH : 0;
-  const totalWidth = RAIL_WIDTH + panelWidth;
+  const isDrawer = mode === "drawer"
+
+  const panelWidth = isDrawer ? PANEL_WIDTH : isDesktop && isPanelOpen ? PANEL_WIDTH : 0;
+  const totalWidth = isDrawer ? PANEL_WIDTH : RAIL_WIDTH + panelWidth;
 
   return (
     <div
       className="flex h-screen shrink-0 bg-tertiary transition-[width] duration-200 ease-out"
       style={{ width: totalWidth }}
     >
-      {/* Left rail: no bg, only right-edge ring */}
+      {!isDrawer ? (
+      /* Left rail: no bg, only right-edge ring */
       <aside
         className={cx(
           "relative flex h-full flex-col",
@@ -302,13 +305,14 @@ export default function Sidebar() {
           </div>
         </div>
       </aside>
+      ) : null}
 
-      {/* Sub nav panel: no bg, only right-edge ring */}
+      {/* Sub nav panel */}
       <aside
         className={cx(
           "relative flex h-full min-h-0 flex-col overflow-hidden transition-[width] duration-200 ease-out",
           "after:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-px after:bg-border-secondary",
-          !isPanelOpen && "pointer-events-none",
+          !isDrawer && !isPanelOpen && "pointer-events-none",
         )}
         style={{ width: panelWidth }}
       >
