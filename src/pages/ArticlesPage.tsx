@@ -79,7 +79,7 @@ function TruncatedText({ text, className }: { text: string; className: string })
   if (!isTruncated) return content
 
   return (
-    <Tooltip title={text} placement="top">
+    <Tooltip title={text} placement="top" trigger="hover">
       <TooltipTrigger className="block w-full text-left">
         {content}
       </TooltipTrigger>
