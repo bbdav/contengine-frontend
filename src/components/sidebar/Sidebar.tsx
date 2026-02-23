@@ -274,7 +274,7 @@ export default function Sidebar() {
         </div>
 
         <div className="mt-auto pb-5">
-          <div className="flex flex-col items-center gap-2">
+          <div className="flex flex-col items-center gap-0.5">
             {bottomRailItems.map((item) => (
               <NavItemButton
                 key={item.href}
