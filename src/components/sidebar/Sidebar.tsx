@@ -256,12 +256,12 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
             style={{ transform: `translateX(${drawerLevel === "root" ? 0 : -PANEL_WIDTH}px)` }}
           >
             {/* Level 1 */}
-            <div className="h-full w-[300px]">
+            <div className="flex h-full w-[300px] flex-col">
               <div className="flex h-[60px] items-center border-b border-secondary px-4">
                 <h2 className="text-lg font-semibold text-primary">Menu</h2>
               </div>
 
-              <nav className="px-2 py-3">
+              <nav className="min-h-0 flex-1 overflow-y-auto px-2 py-3">
                 <ul className="flex flex-col gap-0.5">
                   {topRailItems.map((item) => (
                     <li key={item.href}>
@@ -313,7 +313,7 @@ export default function Sidebar({ mode = "desktop" }: { mode?: "desktop" | "draw
             </div>
 
             {/* Level 2: Content */}
-            <div className="h-full w-[300px]">
+            <div className="flex h-full w-[300px] min-h-0 flex-col">
               {/* Fixed header (title + back) */}
               <div className="flex h-[60px] items-center border-b border-secondary px-3">
                 <button
