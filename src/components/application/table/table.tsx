@@ -110,7 +110,7 @@ const TableRoot = ({ className, size = "md", ...props }: TableRootProps) => {
 
     return (
         <TableContext.Provider value={{ size: context?.size ?? size }}>
-            <div className="h-full" style={{ overflowX: "auto", overflowY: "visible" }}>
+            <div className="h-full" style={{ overflowX: "auto", overflowY: "hidden" }}>
                 <AriaTable
                     className={(state) =>
                         cx(
