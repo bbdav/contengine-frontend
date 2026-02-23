@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { Calendar, Columns01, FilterLines, SearchLg } from "@untitledui/icons"
-import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle } from "@phosphor-icons/react"
+import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 import { Table } from "@/components/application/table/table"
@@ -10,13 +10,8 @@ import { ButtonUtility } from "@/components/base/buttons/button-utility"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
 import { ContentPageLayout } from "@/components/layouts/ContentPageLayout"
-type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
 
-const CircleThreeQuartersIcon = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-    <path d="M12 3a9 9 0 1 1-9 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-  </svg>
-)
+type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
 
 type Row = {
   id: string
@@ -36,7 +31,7 @@ function StatusPill({ status }: { status: Status }) {
       : status === "In Review"
       ? { color: "warning" as const, icon: CircleHalf }
       : status === "Ready to Publish"
-      ? { color: "blue" as const, icon: CircleThreeQuartersIcon }
+      ? { color: "blue" as const, icon: RocketLaunch }
       : status === "Published"
       ? { color: "success" as const, icon: CheckCircle }
       : { color: "error" as const, icon: HighlighterCircle }
@@ -147,122 +142,121 @@ export default function ArticlesPage() {
         </Button>
       }
     >
-
-        {/* Controls */}
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-          <div className="w-full max-w-md">
-            <Input
-              shortcut
-              size="sm"
-              placeholder="Search"
-              icon={SearchLg}
-              value={query}
-              onChange={setQuery}
-              className="rounded-lg"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button color="secondary" size="md" iconLeading={Calendar}>
-              Jan 10, 2025 – Jan 16, 2025
-            </Button>
-
-            <Button color="secondary" size="md" iconLeading={FilterLines}>
-              <span className="inline-flex items-center gap-2">
-                Filters
-                <Badge type="modern" size="sm" color="gray" className="py-0">
-                  3
-                </Badge>
-              </span>
-            </Button>
-
-            <ButtonUtility icon={Columns01} tooltip="Columns" size="md" />
-
-            <Dropdown.Root>
-              <Button color="secondary" size="md">
-                EN
-              </Button>
-              <Dropdown.Popover className="w-min">
-                <Dropdown.Menu>
-                  <Dropdown.Item label="English">English</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown.Popover>
-            </Dropdown.Root>
-          </div>
+      {/* Controls */}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="w-full max-w-md">
+          <Input
+            shortcut
+            size="sm"
+            placeholder="Search"
+            icon={SearchLg}
+            value={query}
+            onChange={setQuery}
+            className="rounded-lg"
+          />
         </div>
 
-        {/* Table */}
-        <div className="mt-4 overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
-          <Table
-            aria-label="Articles"
-            selectionMode="multiple"
-            selectedKeys={selectedKeys}
-            onSelectionChange={(keys) => {
-              // react-aria can pass "all" or a Set.
-              if (keys === "all") {
-                setSelectedKeys(new Set(filtered.map((r) => r.id)))
-              } else {
-                setSelectedKeys(new Set(Array.from(keys as Set<string>).map(String)))
-              }
-            }}
-          >
-            <Table.Header>
-              <Table.Head id="title" label="Title" allowsSorting />
-              <Table.Head id="author" label="Author" className="w-[120px]" />
-              <Table.Head id="slug" label="Slug" className="w-[260px]" />
-              <Table.Head id="updated" label="Last update" className="w-[160px]" />
-              <Table.Head id="status" label="Status" className="w-[180px]" />
-              <Table.Head id="actions" className="w-[56px]" />
-            </Table.Header>
-
-            <Table.Body items={filtered}>
-              {(r: Row) => (
-                <Table.Row id={r.id}>
-                  <Table.Cell>
-                    <div>
-                      <div className="font-medium text-primary">{r.title}</div>
-                      <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
-                    </div>
-                  </Table.Cell>
-
-                  <Table.Cell>
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold">{r.author}</div>
-                    </div>
-                  </Table.Cell>
-
-                  <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
-                  <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
-
-                  <Table.Cell>
-                    <StatusPill status={r.status} />
-                  </Table.Cell>
-
-                  <Table.Cell className="text-right">
-                    <Dropdown.Root>
-                      <Dropdown.DotsButton aria-label="Row actions" />
-
-                      <Dropdown.Popover className="w-min">
-                        <Dropdown.Menu>
-                          <Dropdown.Item label="Edit">Edit</Dropdown.Item>
-                          <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
-                          <Dropdown.Item label="Delete">Delete</Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown.Popover>
-                    </Dropdown.Root>
-                  </Table.Cell>
-                </Table.Row>
-              )}
-            </Table.Body>
-          </Table>
-        </div>
-
-        {/* Footer controls */}
-        <div className="mt-6 flex items-center justify-end gap-3 pb-10">
-          <Button color="tertiary" className="text-tertiary">
-            View 25
+        <div className="flex items-center gap-2">
+          <Button color="secondary" size="md" iconLeading={Calendar}>
+            Jan 10, 2025 – Jan 16, 2025
           </Button>
+
+          <Button color="secondary" size="md" iconLeading={FilterLines}>
+            <span className="inline-flex items-center gap-2">
+              Filters
+              <Badge type="modern" size="sm" color="gray" className="py-0">
+                3
+              </Badge>
+            </span>
+          </Button>
+
+          <ButtonUtility icon={Columns01} tooltip="Columns" size="md" />
+
+          <Dropdown.Root>
+            <Button color="secondary" size="md">
+              EN
+            </Button>
+            <Dropdown.Popover className="w-min">
+              <Dropdown.Menu>
+                <Dropdown.Item label="English">English</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown.Popover>
+          </Dropdown.Root>
         </div>
+      </div>
+
+      {/* Table */}
+      <div className="mt-4 overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
+        <Table
+          aria-label="Articles"
+          selectionMode="multiple"
+          selectedKeys={selectedKeys}
+          onSelectionChange={(keys) => {
+            // react-aria can pass "all" or a Set.
+            if (keys === "all") {
+              setSelectedKeys(new Set(filtered.map((r) => r.id)))
+            } else {
+              setSelectedKeys(new Set(Array.from(keys as Set<string>).map(String)))
+            }
+          }}
+        >
+          <Table.Header>
+            <Table.Head id="title" label="Title" allowsSorting />
+            <Table.Head id="author" label="Author" className="w-[120px]" />
+            <Table.Head id="slug" label="Slug" className="w-[260px]" />
+            <Table.Head id="updated" label="Last update" className="w-[160px]" />
+            <Table.Head id="status" label="Status" className="w-[180px]" />
+            <Table.Head id="actions" className="w-[56px]" />
+          </Table.Header>
+
+          <Table.Body items={filtered}>
+            {(r: Row) => (
+              <Table.Row id={r.id}>
+                <Table.Cell>
+                  <div>
+                    <div className="font-medium text-primary">{r.title}</div>
+                    <div className="text-sm text-tertiary line-clamp-1">{r.desc}</div>
+                  </div>
+                </Table.Cell>
+
+                <Table.Cell>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold">{r.author}</div>
+                  </div>
+                </Table.Cell>
+
+                <Table.Cell className="text-tertiary">{r.slug}</Table.Cell>
+                <Table.Cell className="text-tertiary">{r.updated}</Table.Cell>
+
+                <Table.Cell>
+                  <StatusPill status={r.status} />
+                </Table.Cell>
+
+                <Table.Cell className="text-right">
+                  <Dropdown.Root>
+                    <Dropdown.DotsButton aria-label="Row actions" />
+
+                    <Dropdown.Popover className="w-min">
+                      <Dropdown.Menu>
+                        <Dropdown.Item label="Edit">Edit</Dropdown.Item>
+                        <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
+                        <Dropdown.Item label="Delete">Delete</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown.Popover>
+                  </Dropdown.Root>
+                </Table.Cell>
+              </Table.Row>
+            )}
+          </Table.Body>
+        </Table>
+      </div>
+
+      {/* Footer controls */}
+      <div className="mt-6 flex items-center justify-end gap-3 pb-10">
+        <Button color="tertiary" className="text-tertiary">
+          View 25
+        </Button>
+      </div>
     </ContentPageLayout>
   )
 }
