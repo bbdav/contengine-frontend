@@ -7,12 +7,14 @@ import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 import { DateRangePicker } from "@/components/application/date-picker/date-range-picker"
 import { Pagination } from "@/components/application/pagination/pagination-base"
 import { Table } from "@/components/application/table/table"
+import { Avatar } from "@/components/base/avatar/avatar"
 import { ButtonGroup, ButtonGroupItem } from "@/components/base/button-group/button-group"
 import { Badge, BadgeWithIcon } from "@/components/base/badges/badges"
 import { Button } from "@/components/base/buttons/button"
 import { ButtonUtility } from "@/components/base/buttons/button-utility"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
+import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip"
 import { ContentPageLayout } from "@/components/layouts/ContentPageLayout"
 
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
@@ -21,12 +23,25 @@ type Row = {
   id: string
   title: string
   desc: string
-  author: string
+  authorName: string
+  authorAvatarUrl: string
   slug: string
   updated: string
   status: Status
   selected?: boolean
 }
+
+const AUTHOR_AVATARS = [
+  "https://www.untitledui.com/images/avatars/olivia-rhye?bg=%23E0E0E0",
+  "https://www.untitledui.com/images/avatars/phoenix-baker?bg=%23E0E0E0",
+  "https://www.untitledui.com/images/avatars/lana-steiner?bg=%23E0E0E0",
+  "https://www.untitledui.com/images/avatars/demi-wilkinson?bg=%23E0E0E0",
+  "https://www.untitledui.com/images/avatars/natali-craig?bg=%23E0E0E0",
+  "https://www.untitledui.com/images/avatars/candice-wu?bg=%23E0E0E0",
+  "https://www.untitledui.com/images/avatars/orlando-diggs?bg=%23E0E0E0",
+]
+
+const pickAuthorAvatar = (name: string) => AUTHOR_AVATARS[name.charCodeAt(0) % AUTHOR_AVATARS.length]
 
 type Language = {
   code: "en" | "fr" | "es"
@@ -82,7 +97,8 @@ export default function ArticlesPage() {
         id: "1",
         title: "A bug is becoming a meme on the internet",
         desc: "Maybe the answer is in this article, or not",
-        author: "A",
+        authorName: "Olivia Rhye",
+        authorAvatarUrl: pickAuthorAvatar("Olivia Rhye"),
         slug: "squirrel-steals-pizza",
         updated: "Jan 4, 2025",
         status: "Draft",
@@ -91,7 +107,8 @@ export default function ArticlesPage() {
         id: "2",
         title: "This shrimp is awesome",
         desc: "Mantis shrimps, or stomatopods, are mesmerizing",
-        author: "B",
+        authorName: "Phoenix Baker",
+        authorAvatarUrl: pickAuthorAvatar("Phoenix Baker"),
         slug: "this-shrimp-is-awesome",
         updated: "Jan 4, 2025",
         status: "In Review",
@@ -100,7 +117,8 @@ export default function ArticlesPage() {
         id: "3",
         title: "The internet's Own boy",
         desc: "How a bug on MySQL is becoming a meme",
-        author: "C",
+        authorName: "Lana Steiner",
+        authorAvatarUrl: pickAuthorAvatar("Lana Steiner"),
         slug: "rise-of-ai-generated-art",
         updated: "Jan 2, 2025",
         status: "Ready to Publish",
@@ -109,7 +127,8 @@ export default function ArticlesPage() {
         id: "4",
         title: "Beautiful picture",
         desc: "Follow the story of Aaron Swartz",
-        author: "D",
+        authorName: "Demi Wilkinson",
+        authorAvatarUrl: pickAuthorAvatar("Demi Wilkinson"),
         slug: "a-bug-is-becoming-a-meme",
         updated: "Jan 6, 2025",
         status: "Published",
@@ -118,7 +137,8 @@ export default function ArticlesPage() {
         id: "5",
         title: "A bug is becoming a meme on the internet",
         desc: "Description of a beautiful picture",
-        author: "E",
+        authorName: "Natali Craig",
+        authorAvatarUrl: pickAuthorAvatar("Natali Craig"),
         slug: "this-shrimp-is-awesome",
         updated: "Jan 8, 2025",
         status: "Revision required",
@@ -127,7 +147,8 @@ export default function ArticlesPage() {
         id: "6",
         title: "The rise of AI generated art",
         desc: "The rise of AI generated art: Explore how",
-        author: "F",
+        authorName: "Candice Wu",
+        authorAvatarUrl: pickAuthorAvatar("Candice Wu"),
         slug: "beautiful-picture",
         updated: "Jan 6, 2025",
         status: "Draft",
@@ -136,7 +157,8 @@ export default function ArticlesPage() {
         id: "7",
         title: "A squirrel steals a slice of pizza",
         desc: "A squirrel steals a slice of pizza: Watch",
-        author: "G",
+        authorName: "Orlando Diggs",
+        authorAvatarUrl: pickAuthorAvatar("Orlando Diggs"),
         slug: "the-internets-own-boy",
         updated: "Jan 4, 2025",
         status: "Draft",
@@ -179,8 +201,8 @@ export default function ArticlesPage() {
           bv = b.title
           break
         case "author":
-          av = a.author
-          bv = b.author
+          av = a.authorName
+          bv = b.authorName
           break
         case "slug":
           av = a.slug
@@ -329,7 +351,11 @@ export default function ArticlesPage() {
 
                       <Table.Cell>
                         <div className="flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-semibold">{r.author}</div>
+                          <Tooltip title={r.authorName} placement="top">
+                            <TooltipTrigger>
+                              <Avatar size="sm" src={r.authorAvatarUrl} alt={r.authorName} />
+                            </TooltipTrigger>
+                          </Tooltip>
                         </div>
                       </Table.Cell>
 
