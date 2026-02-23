@@ -1,15 +1,22 @@
 import { useMemo, useState } from "react"
 import { Calendar, Columns01, FilterLines, SearchLg } from "@untitledui/icons"
+import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle } from "@phosphor-icons/react"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
 import { Table } from "@/components/application/table/table"
-import { Badge } from "@/components/base/badges/badges"
+import { Badge, BadgeWithIcon } from "@/components/base/badges/badges"
 import { Button } from "@/components/base/buttons/button"
 import { ButtonUtility } from "@/components/base/buttons/button-utility"
 import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
 import { ContentPageLayout } from "@/components/layouts/ContentPageLayout"
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
+
+const CircleThreeQuartersIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+    <path d="M12 3a9 9 0 1 1-9 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+)
 
 type Row = {
   id: string
@@ -23,32 +30,21 @@ type Row = {
 }
 
 function StatusPill({ status }: { status: Status }) {
-  const variant =
-    status === "Published"
-      ? "success"
+  const badge =
+    status === "Draft"
+      ? { color: "gray" as const, icon: CircleDashed }
       : status === "In Review"
-      ? "warning"
+      ? { color: "warning" as const, icon: CircleHalf }
       : status === "Ready to Publish"
-      ? "brand"
-      : status === "Revision required"
-      ? "destructive"
-      : "secondary"
-
-  const className =
-    variant === "success"
-      ? "bg-success-50 text-success-700 border border-success-200"
-      : variant === "warning"
-      ? "bg-warning-50 text-warning-700 border border-warning-200"
-      : variant === "brand"
-      ? "bg-brand-50 text-brand-700 border border-brand-200"
-      : variant === "destructive"
-      ? "bg-error-50 text-error-700 border border-error-200"
-      : "bg-gray-50 text-gray-700 border border-gray-200"
+      ? { color: "blue" as const, icon: CircleThreeQuartersIcon }
+      : status === "Published"
+      ? { color: "success" as const, icon: CheckCircle }
+      : { color: "error" as const, icon: HighlighterCircle }
 
   return (
-    <span className={"inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium " + className}>
+    <BadgeWithIcon type="pill-color" size="sm" color={badge.color} iconLeading={badge.icon}>
       {status}
-    </span>
+    </BadgeWithIcon>
   )
 }
 
