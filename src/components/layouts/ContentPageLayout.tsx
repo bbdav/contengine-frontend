@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { XClose, Zap } from "@untitledui/icons";
+import { HelpCircle, SearchLg, Zap } from "@untitledui/icons";
 
 import { Button } from "@/components/base/buttons/button";
 import { ButtonUtility } from "@/components/base/buttons/button-utility";
@@ -20,8 +20,8 @@ const DefaultTopRightActions = () => {
             <Button color="secondary" size="md" iconLeading={Zap}>
                 Upgrade now
             </Button>
-            <ButtonUtility icon={XClose} tooltip="Close" size="md" />
-            <ButtonUtility icon={XClose} tooltip="Close" size="md" />
+            <ButtonUtility icon={SearchLg} tooltip="Search" size="sm" color="tertiary" />
+            <ButtonUtility icon={HelpCircle} tooltip="Help" size="sm" color="tertiary" />
         </div>
     );
 };
