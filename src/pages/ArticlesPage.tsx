@@ -142,11 +142,9 @@ export default function ArticlesPage() {
       title="Article"
       hideHeader
       containerClassName="w-full px-0 py-0"
-    >
-      {/* Header */}
-      <div className="px-6 py-6">
-        <div className="flex flex-col gap-4">
-          <div className="flex items-start justify-between gap-6">
+      headerContent={
+        <div className="px-6">
+          <div className="mt-4 flex items-start justify-between gap-6">
             <div className="min-w-0">
               <h1 className="text-display-xs font-semibold text-primary">Article</h1>
               <p className="mt-1 text-sm text-tertiary">7 entries found</p>
@@ -159,23 +157,24 @@ export default function ArticlesPage() {
             </div>
           </div>
         </div>
-      </div>
-
+      }
+    >
       {/* Controls + table */}
-      <div className="mt-4 px-6">
-        {/* Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="w-full max-w-md">
-            <Input
-              shortcut
-              size="sm"
-              placeholder="Search"
-              icon={SearchLg}
-              value={query}
-              onChange={setQuery}
-              className="rounded-lg"
-            />
-          </div>
+      <div className="px-6 pb-10">
+        <div className="mt-4">
+          {/* Controls */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="w-full max-w-md">
+              <Input
+                shortcut
+                size="sm"
+                placeholder="Search"
+                icon={SearchLg}
+                value={query}
+                onChange={setQuery}
+                className="rounded-lg"
+              />
+            </div>
 
         <div className="flex items-center gap-2">
           <Button color="secondary" size="md" iconLeading={Calendar}>
@@ -272,11 +271,12 @@ export default function ArticlesPage() {
         </Table>
       </div>
 
-        {/* Footer controls */}
-        <div className="mt-6 flex items-center justify-end gap-3 pb-10">
-          <Button color="tertiary" className="text-tertiary">
-            View 25
-          </Button>
+          {/* Footer controls */}
+          <div className="mt-6 flex items-center justify-end gap-3">
+            <Button color="tertiary" className="text-tertiary">
+              View 25
+            </Button>
+          </div>
         </div>
       </div>
     </ContentPageLayout>

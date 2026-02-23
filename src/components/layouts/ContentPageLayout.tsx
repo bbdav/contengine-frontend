@@ -11,10 +11,12 @@ type ContentPageLayoutProps = {
     primaryAction?: ReactNode;
     /** Right side of the top bar (defaults to Upgrade + Search + Help). */
     topRightActions?: ReactNode;
-    /** Hide the default page header (title/subtitle/primary action) inside the container. */
+    /** Custom content rendered under the top bar, inside the same header wrapper. */
+    headerContent?: ReactNode;
+    /** Hide the default page header (title/subtitle/primary action). */
     hideHeader?: boolean;
     /**
-     * Customize the main content container wrapper.
+     * Customize the main content (body) container wrapper.
      * Defaults to: "mx-auto w-full max-w-container px-6 py-6"
      */
     containerClassName?: string;
@@ -39,34 +41,42 @@ export function ContentPageLayout({
     subtitle,
     primaryAction,
     topRightActions,
+    headerContent,
     hideHeader = false,
     containerClassName,
     children,
 }: ContentPageLayoutProps) {
     return (
         <div className="w-full">
-            {/* Top bar */}
-            <div className="flex h-[60px] items-center justify-between border-b border-secondary">
-                <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
-                <div className="shrink-0 px-6 py-3">{topRightActions ?? <DefaultTopRightActions />}</div>
-            </div>
-
-            <div className={containerClassName ?? "mx-auto w-full max-w-container px-6 py-6"}>
-                {/* Header */}
-                {!hideHeader ? (
-                    <div className="mt-6 flex items-start justify-between gap-6">
-                        <div className="min-w-0">
-                            <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
-                            {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
-                        </div>
-
-                        {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
+            {/* Header wrapper (top bar + optional header content) */}
+            <div className="w-full border-b border-secondary">
+                <div className="mx-auto w-full max-w-container">
+                    {/* Top bar */}
+                    <div className="flex h-[60px] items-center justify-between">
+                        <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
+                        <div className="shrink-0 px-6 py-3">{topRightActions ?? <DefaultTopRightActions />}</div>
                     </div>
-                ) : null}
 
-                {/* Page body */}
-                {children}
+                    {/* Default header */}
+                    {!hideHeader ? (
+                        <div className="px-6 pb-6">
+                            <div className="mt-6 flex items-start justify-between gap-6">
+                                <div className="min-w-0">
+                                    <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
+                                    {subtitle ? <p className="mt-1 text-sm text-tertiary">{subtitle}</p> : null}
+                                </div>
+
+                                {primaryAction ? <div className="shrink-0">{primaryAction}</div> : null}
+                            </div>
+                        </div>
+                    ) : null}
+
+                    {headerContent ? <>{headerContent}</> : null}
+                </div>
             </div>
+
+            {/* Page body */}
+            <div className={containerClassName ?? "mx-auto w-full max-w-container px-6 py-6"}>{children}</div>
         </div>
     );
 }
