@@ -353,7 +353,10 @@ export default function ArticlesPage() {
             </div>
 
             <div className="shrink-0">
-              <Button color="primary" size="md" className="rounded-lg">
+              <Button color="primary" size="sm" className="rounded-lg sm:hidden">
+                Create new entry
+              </Button>
+              <Button color="primary" size="md" className="hidden rounded-lg sm:inline-flex">
                 Create new entry
               </Button>
             </div>
