@@ -43,7 +43,7 @@ const DefaultTopRightActions = () => {
 };
 
 const FullLogo = ({ className }: { className?: string }) => (
-    <img src="/logo-full.svg" alt="Logo" className={className} />
+    <img src="/contengine-logo-mobile.svg" alt="Contengine" className={className} />
 )
 
 export function ContentPageLayout({
