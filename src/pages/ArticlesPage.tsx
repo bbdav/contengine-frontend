@@ -372,103 +372,112 @@ export default function ArticlesPage() {
         <div className="shrink-0 px-6 pt-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="flex w-full items-center gap-2">
-              <div className="flex-1 sm:max-w-md">
+              <div className="relative flex-1 sm:max-w-md">
                 <Input
                   ref={searchRef}
-                  shortcut
+                  shortcut={isSmUp}
                   size="sm"
                   placeholder="Search"
                   icon={SearchLg}
                   value={query}
                   onChange={setQuery}
                   className="rounded-lg"
+                  inputClassName={!isSmUp ? "pr-12" : undefined}
                 />
+
+                {!isSmUp ? (
+                  <Dropdown.Root>
+                    <ButtonUtility
+                      icon={FilterLines}
+                      tooltip="Filters"
+                      size="sm"
+                      color="tertiary"
+                      className="absolute right-1 top-1/2 -translate-y-1/2"
+                    />
+
+                    <Dropdown.Popover className="w-[320px]">
+                      <div className="p-3">
+                        <div className="text-sm font-semibold text-secondary">Filters</div>
+
+                        <div className="mt-3">
+                          <DateRangePicker triggerSize="sm" triggerClassName="w-full" />
+                        </div>
+
+                        <div className="my-3 h-px w-full bg-border-secondary" />
+
+                        <div className="text-sm font-semibold text-secondary">Language</div>
+                        <div className="mt-2 flex flex-col gap-1">
+                          {LANGUAGES.map((lang) => (
+                            <button
+                              key={lang.code}
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-semibold text-secondary hover:bg-primary_hover"
+                              onClick={() => setLanguage(lang)}
+                            >
+                              <img
+                                src={`https://www.untitledui.com/images/flags/${lang.flag}.svg`}
+                                alt={`${lang.flag} flag`}
+                                className="size-4 rounded-full"
+                              />
+                              {lang.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        <div className="my-3 h-px w-full bg-border-secondary" />
+
+                        <div className="text-sm font-semibold text-secondary">Columns</div>
+                        <div className="mt-2">
+                          <Dropdown.Menu selectionMode="multiple" disallowEmptySelection={false}>
+                            <Dropdown.Section>
+                              <Dropdown.Item
+                                icon={makeCheckedIcon(visibleColumns.author)}
+                                label="Author"
+                                onAction={() => setVisibleColumns((s) => ({ ...s, author: !s.author }))}
+                              />
+                              <Dropdown.Item
+                                icon={makeCheckedIcon(visibleColumns.slug)}
+                                label="Slug"
+                                onAction={() => setVisibleColumns((s) => ({ ...s, slug: !s.slug }))}
+                              />
+                              <Dropdown.Item
+                                icon={makeCheckedIcon(visibleColumns.updated)}
+                                label="Last update"
+                                onAction={() => setVisibleColumns((s) => ({ ...s, updated: !s.updated }))}
+                              />
+                              <Dropdown.Item
+                                icon={makeCheckedIcon(visibleColumns.status)}
+                                label="Status"
+                                onAction={() => setVisibleColumns((s) => ({ ...s, status: !s.status }))}
+                              />
+                            </Dropdown.Section>
+
+                            <Dropdown.Separator />
+
+                            <Dropdown.Section>
+                              <Dropdown.Item
+                                label="Reset columns"
+                                onAction={() =>
+                                  setVisibleColumns({
+                                    author: true,
+                                    slug: true,
+                                    updated: true,
+                                    status: true,
+                                  })
+                                }
+                              />
+                            </Dropdown.Section>
+                          </Dropdown.Menu>
+                        </div>
+                      </div>
+                    </Dropdown.Popover>
+                  </Dropdown.Root>
+                ) : null}
               </div>
 
-              {!isSmUp ? (
-                <Dropdown.Root>
-                  <ButtonUtility icon={FilterLines} tooltip="Filters" size="sm" color="tertiary" />
-
-                  <Dropdown.Popover className="w-[320px]">
-                    <div className="p-3">
-                      <div className="text-sm font-semibold text-secondary">Filters</div>
-
-                      <div className="mt-3">
-                        <DateRangePicker triggerSize="sm" triggerClassName="w-full" />
-                      </div>
-
-                      <div className="my-3 h-px w-full bg-border-secondary" />
-
-                      <div className="text-sm font-semibold text-secondary">Language</div>
-                      <div className="mt-2 flex flex-col gap-1">
-                        {LANGUAGES.map((lang) => (
-                          <button
-                            key={lang.code}
-                            type="button"
-                            className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-semibold text-secondary hover:bg-primary_hover"
-                            onClick={() => setLanguage(lang)}
-                          >
-                            <img
-                              src={`https://www.untitledui.com/images/flags/${lang.flag}.svg`}
-                              alt={`${lang.flag} flag`}
-                              className="size-4 rounded-full"
-                            />
-                            {lang.label}
-                          </button>
-                        ))}
-                      </div>
-
-                      <div className="my-3 h-px w-full bg-border-secondary" />
-
-                      <div className="text-sm font-semibold text-secondary">Columns</div>
-                      <div className="mt-2">
-                        <Dropdown.Menu selectionMode="multiple" disallowEmptySelection={false}>
-                          <Dropdown.Section>
-                            <Dropdown.Item
-                              icon={makeCheckedIcon(visibleColumns.author)}
-                              label="Author"
-                              onAction={() => setVisibleColumns((s) => ({ ...s, author: !s.author }))}
-                            />
-                            <Dropdown.Item
-                              icon={makeCheckedIcon(visibleColumns.slug)}
-                              label="Slug"
-                              onAction={() => setVisibleColumns((s) => ({ ...s, slug: !s.slug }))}
-                            />
-                            <Dropdown.Item
-                              icon={makeCheckedIcon(visibleColumns.updated)}
-                              label="Last update"
-                              onAction={() => setVisibleColumns((s) => ({ ...s, updated: !s.updated }))}
-                            />
-                            <Dropdown.Item
-                              icon={makeCheckedIcon(visibleColumns.status)}
-                              label="Status"
-                              onAction={() => setVisibleColumns((s) => ({ ...s, status: !s.status }))}
-                            />
-                          </Dropdown.Section>
-
-                          <Dropdown.Separator />
-
-                          <Dropdown.Section>
-                            <Dropdown.Item
-                              label="Reset columns"
-                              onAction={() =>
-                                setVisibleColumns({
-                                  author: true,
-                                  slug: true,
-                                  updated: true,
-                                  status: true,
-                                })
-                              }
-                            />
-                          </Dropdown.Section>
-                        </Dropdown.Menu>
-                      </div>
-                    </div>
-                  </Dropdown.Popover>
-                </Dropdown.Root>
-              ) : (
+              {isSmUp ? (
                 <div className="flex items-center gap-2">
-                  <DateRangePicker triggerSize="sm" triggerClassName="w-full sm:w-auto" />
+                  <DateRangePicker triggerSize="sm" />
 
                   <Button color="secondary" size="sm" iconLeading={FilterLines}>
                     <span className="inline-flex items-center gap-2">
@@ -549,7 +558,7 @@ export default function ArticlesPage() {
                     </Dropdown.Popover>
                   </Dropdown.Root>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         </div>
