@@ -67,7 +67,7 @@ export function ContentPageLayout({
             <div className="w-full shrink-0">
                 <div className={headerContainerClassName ?? "mx-auto w-full max-w-container"}>
                     {/* Top bar */}
-                    <div className="flex h-[60px] items-center justify-between border-b border-secondary">
+                    <div className="flex items-center justify-between border-b border-secondary py-3 lg:h-[60px] lg:py-0">
                         {isDesktop ? (
                             <>
                                 <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
@@ -75,10 +75,10 @@ export function ContentPageLayout({
                             </>
                         ) : (
                             <>
-                                <div className="flex h-full min-w-0 items-center px-4 py-3">
-                                    <FullLogo className="h-8 w-auto" />
+                                <div className="flex min-w-0 items-center px-4">
+                                    <FullLogo className="block h-7 w-auto" />
                                 </div>
-                                <div className="shrink-0 px-4 py-3">
+                                <div className="shrink-0 px-4">
                                     <ButtonUtility
                                         icon={mobileNav.isOpen ? XClose : Menu01}
                                         tooltip={mobileNav.isOpen ? "Close menu" : "Open menu"}
