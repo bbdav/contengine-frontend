@@ -17,6 +17,7 @@ import { Dropdown } from "@/components/base/dropdown/dropdown"
 import { Input } from "@/components/base/input/input"
 import { Tooltip, TooltipTrigger } from "@/components/base/tooltip/tooltip"
 import { ContentPageLayout } from "@/components/layouts/ContentPageLayout"
+import { useBreakpoint } from "@/hooks/use-breakpoint"
 
 type Status = "Draft" | "In Review" | "Ready to Publish" | "Published" | "Revision required"
 
@@ -104,6 +105,7 @@ function StatusPill({ status }: { status: Status }) {
 }
 
 export default function ArticlesPage() {
+  const isSmUp = useBreakpoint("sm")
   const [query, setQuery] = useState("")
   const searchRef = useRef<HTMLInputElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -456,7 +458,7 @@ export default function ArticlesPage() {
                   iconLeading={makeFlagIcon(language.flag)}
                   iconTrailing={ChevronDown}
                 >
-                  <span className="hidden sm:inline">{language.code.toUpperCase()}</span>
+                  {isSmUp ? language.code.toUpperCase() : null}
                 </Button>
                 <Dropdown.Popover className="w-min">
                   <Dropdown.Menu>
