@@ -82,7 +82,7 @@ export function ContentPageLayout({
                                     <ButtonUtility
                                         icon={mobileNav.isOpen ? XClose : Menu01}
                                         tooltip={mobileNav.isOpen ? "Close menu" : "Open menu"}
-                                        size="md"
+                                        size="sm"
                                         onClick={() => mobileNav.toggle()}
                                     />
                                 </div>
