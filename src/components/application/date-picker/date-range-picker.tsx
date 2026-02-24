@@ -91,13 +91,13 @@ export const DateRangePicker = ({
     return (
         <AriaDateRangePicker aria-label="Date range picker" shouldCloseOnSelect={false} {...props} value={value} onChange={setValue}>
             <AriaGroup>
-                <Button size={triggerSize} color="secondary" iconLeading={CalendarIcon} className={triggerClassName}>
+                <Button size={triggerSize} color="secondary" iconLeading={CalendarIcon} className={cx("min-w-0", triggerClassName)}>
                     {!value ? (
-                        <span className="text-placeholder">Select dates</span>
+                        <span className="text-placeholder truncate">Select dates</span>
                     ) : value.start && value.end && value.start.compare(value.end) === 0 ? (
-                        formattedStartDate
+                        <span className="truncate">{formattedStartDate}</span>
                     ) : (
-                        `${formattedStartDate} – ${formattedEndDate}`
+                        <span className="truncate">{`${formattedStartDate} – ${formattedEndDate}`}</span>
                     )}
                 </Button>
             </AriaGroup>
