@@ -20,9 +20,23 @@ interface DateRangePickerProps extends AriaDateRangePickerProps<DateValue> {
     onApply?: () => void;
     /** The function to call when the cancel button is clicked. */
     onCancel?: () => void;
+
+    /** Size for the trigger button. */
+    triggerSize?: React.ComponentProps<typeof Button>["size"];
+    /** Class name applied to the trigger button. */
+    triggerClassName?: string;
 }
 
-export const DateRangePicker = ({ value: valueProp, defaultValue, onChange, onApply, onCancel, ...props }: DateRangePickerProps) => {
+export const DateRangePicker = ({
+    value: valueProp,
+    defaultValue,
+    onChange,
+    onApply,
+    onCancel,
+    triggerSize = "md",
+    triggerClassName,
+    ...props
+}: DateRangePickerProps) => {
     const { locale } = useLocale();
     const formatter = useDateFormatter({
         month: "short",
@@ -77,7 +91,7 @@ export const DateRangePicker = ({ value: valueProp, defaultValue, onChange, onAp
     return (
         <AriaDateRangePicker aria-label="Date range picker" shouldCloseOnSelect={false} {...props} value={value} onChange={setValue}>
             <AriaGroup>
-                <Button size="md" color="secondary" iconLeading={CalendarIcon}>
+                <Button size={triggerSize} color="secondary" iconLeading={CalendarIcon} className={triggerClassName}>
                     {!value ? (
                         <span className="text-placeholder">Select dates</span>
                     ) : value.start && value.end && value.start.compare(value.end) === 0 ? (

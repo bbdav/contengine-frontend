@@ -365,8 +365,8 @@ export default function ArticlesPage() {
       <div ref={bodyRef} className="flex h-full flex-col">
         {/* Controls */}
         <div className="shrink-0 px-6 pt-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="w-full max-w-md">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+            <div className="w-full sm:max-w-md">
               <Input
                 ref={searchRef}
                 shortcut
@@ -379,71 +379,81 @@ export default function ArticlesPage() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <DateRangePicker />
+            <div className="flex w-full items-center gap-2 sm:w-auto">
+              <div className="flex-1 sm:flex-none">
+                <DateRangePicker triggerSize="sm" triggerClassName="w-full sm:w-auto" />
+              </div>
 
-              <Button color="secondary" size="md" iconLeading={FilterLines}>
+              <Button color="secondary" size="sm" iconLeading={FilterLines}>
                 <span className="inline-flex items-center gap-2">
-                  Filters
+                  <span className="hidden sm:inline">Filters</span>
                   <Badge type="modern" size="sm" color="gray" className="py-0">
                     3
                   </Badge>
                 </span>
               </Button>
 
+              <div className="hidden sm:block">
+                <Dropdown.Root>
+                  <ButtonUtility icon={Columns03} tooltip="Columns" size="sm" />
+                  <Dropdown.Popover>
+                    <div className="border-b border-secondary p-3">
+                      <div className="text-sm font-semibold text-secondary">Columns</div>
+                    </div>
+
+                    <Dropdown.Menu selectionMode="multiple" disallowEmptySelection={false}>
+                      <Dropdown.Section>
+                        <Dropdown.Item
+                          icon={makeCheckedIcon(visibleColumns.author)}
+                          label="Author"
+                          onAction={() => setVisibleColumns((s) => ({ ...s, author: !s.author }))}
+                        />
+                        <Dropdown.Item
+                          icon={makeCheckedIcon(visibleColumns.slug)}
+                          label="Slug"
+                          onAction={() => setVisibleColumns((s) => ({ ...s, slug: !s.slug }))}
+                        />
+                        <Dropdown.Item
+                          icon={makeCheckedIcon(visibleColumns.updated)}
+                          label="Last update"
+                          onAction={() => setVisibleColumns((s) => ({ ...s, updated: !s.updated }))}
+                        />
+                        <Dropdown.Item
+                          icon={makeCheckedIcon(visibleColumns.status)}
+                          label="Status"
+                          onAction={() => setVisibleColumns((s) => ({ ...s, status: !s.status }))}
+                        />
+                      </Dropdown.Section>
+
+                      <Dropdown.Separator />
+
+                      <Dropdown.Section>
+                        <Dropdown.Item
+                          label="Reset columns"
+                          onAction={() =>
+                            setVisibleColumns({
+                              author: true,
+                              slug: true,
+                              updated: true,
+                              status: true,
+                            })
+                          }
+                        />
+                      </Dropdown.Section>
+                    </Dropdown.Menu>
+                  </Dropdown.Popover>
+                </Dropdown.Root>
+              </div>
+
               <Dropdown.Root>
-                <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
-                <Dropdown.Popover>
-                  <div className="border-b border-secondary p-3">
-                    <div className="text-sm font-semibold text-secondary">Columns</div>
-                  </div>
-
-                  <Dropdown.Menu selectionMode="multiple" disallowEmptySelection={false}>
-                    <Dropdown.Section>
-                      <Dropdown.Item
-                        icon={makeCheckedIcon(visibleColumns.author)}
-                        label="Author"
-                        onAction={() => setVisibleColumns((s) => ({ ...s, author: !s.author }))}
-                      />
-                      <Dropdown.Item
-                        icon={makeCheckedIcon(visibleColumns.slug)}
-                        label="Slug"
-                        onAction={() => setVisibleColumns((s) => ({ ...s, slug: !s.slug }))}
-                      />
-                      <Dropdown.Item
-                        icon={makeCheckedIcon(visibleColumns.updated)}
-                        label="Last update"
-                        onAction={() => setVisibleColumns((s) => ({ ...s, updated: !s.updated }))}
-                      />
-                      <Dropdown.Item
-                        icon={makeCheckedIcon(visibleColumns.status)}
-                        label="Status"
-                        onAction={() => setVisibleColumns((s) => ({ ...s, status: !s.status }))}
-                      />
-                    </Dropdown.Section>
-
-                    <Dropdown.Separator />
-
-                    <Dropdown.Section>
-                      <Dropdown.Item
-                        label="Reset columns"
-                        onAction={() =>
-                          setVisibleColumns({
-                            author: true,
-                            slug: true,
-                            updated: true,
-                            status: true,
-                          })
-                        }
-                      />
-                    </Dropdown.Section>
-                  </Dropdown.Menu>
-                </Dropdown.Popover>
-              </Dropdown.Root>
-
-              <Dropdown.Root>
-                <Button color="secondary" size="md" iconLeading={makeFlagIcon(language.flag)} iconTrailing={ChevronDown}>
-                  {language.code.toUpperCase()}
+                <Button
+                  color="secondary"
+                  size="sm"
+                  aria-label={`Language: ${language.label}`}
+                  iconLeading={makeFlagIcon(language.flag)}
+                  iconTrailing={ChevronDown}
+                >
+                  <span className="hidden sm:inline">{language.code.toUpperCase()}</span>
                 </Button>
                 <Dropdown.Popover className="w-min">
                   <Dropdown.Menu>
