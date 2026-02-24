@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { endOfMonth, getLocalTimeZone, startOfMonth, today } from "@internationalized/date"
 import { useHotkeys } from "react-hotkeys-hook"
 import type { SortDescriptor } from "react-aria-components"
 import { ArrowLeft, ArrowRight, Check, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
@@ -106,6 +107,11 @@ function StatusPill({ status }: { status: Status }) {
 
 export default function ArticlesPage() {
   const isSmUp = useBreakpoint("sm")
+  const thisMonthRange = useMemo(() => {
+    const now = today(getLocalTimeZone())
+    return { start: startOfMonth(now), end: endOfMonth(now) }
+  }, [])
+
   const [query, setQuery] = useState("")
   const searchRef = useRef<HTMLInputElement>(null)
   const bodyRef = useRef<HTMLDivElement>(null)
@@ -400,7 +406,7 @@ export default function ArticlesPage() {
                         <div className="text-sm font-semibold text-secondary">Filters</div>
 
                         <div className="mt-3">
-                          <DateRangePicker triggerSize="sm" triggerClassName="w-full" />
+                          <DateRangePicker defaultValue={thisMonthRange} triggerSize="sm" triggerClassName="w-full" />
                         </div>
 
                         <div className="my-3 h-px w-full bg-border-secondary" />
@@ -478,7 +484,7 @@ export default function ArticlesPage() {
 
             {isSmUp ? (
               <div className="flex items-center gap-2">
-                <DateRangePicker triggerSize="md" />
+                <DateRangePicker defaultValue={thisMonthRange} triggerSize="md" />
 
                 <Button color="secondary" size="md" iconLeading={FilterLines}>
                   <span className="inline-flex items-center gap-2">
