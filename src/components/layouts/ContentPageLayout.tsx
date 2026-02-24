@@ -67,7 +67,7 @@ export function ContentPageLayout({
             <div className="w-full shrink-0">
                 <div className={headerContainerClassName ?? "mx-auto w-full max-w-container"}>
                     {/* Top bar */}
-                    <div className="flex items-center justify-between border-b border-secondary py-3 lg:h-[60px] lg:py-0">
+                    <div className="flex items-center justify-between border-b border-secondary py-2 lg:h-[60px] lg:py-0">
                         {isDesktop ? (
                             <>
                                 <div className="flex h-full min-w-0 items-center px-6 py-3">{breadcrumbs}</div>
