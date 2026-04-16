@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { endOfMonth, getLocalTimeZone, startOfMonth, today } from "@internationalized/date"
 import { useHotkeys } from "react-hotkeys-hook"
-import type { SortDescriptor } from "react-aria-components"
+import type { DateValue, SortDescriptor } from "react-aria-components"
 import { ArrowLeft, ArrowRight, Calendar, Check, ChevronDown, ChevronRight, Columns03, FilterLines, Flag01, SearchLg, Translate01, UserEdit, XClose } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
@@ -110,6 +110,7 @@ type FilterState = {
   authors: string[]
   language: Language | null
   datePreset: string
+  customDateRange?: { start: DateValue; end: DateValue } | null
 }
 
 function FilterChip({
@@ -223,7 +224,7 @@ export default function ArticlesPage() {
     (filters.datePreset ? 1 : 0)
 
   const clearAllFilters = () =>
-    setFilters({ statuses: [], authors: [], language: null, datePreset: "" })
+    setFilters({ statuses: [], authors: [], language: null, datePreset: "", customDateRange: null })
 
   // Draft filters – staged while the panel is open, committed on "Apply"
   const [draftFilters, setDraftFilters] = useState<FilterState>(filters)
@@ -238,8 +239,15 @@ export default function ArticlesPage() {
     setFiltersOpen(false)
   }
   const clearDraftFilters = () => {
-    setDraftFilters({ statuses: [], authors: [], language: null, datePreset: "" })
+    setDraftFilters({ statuses: [], authors: [], language: null, datePreset: "", customDateRange: null })
   }
+
+  // Custom date range picker
+  const [customRangeOpen, setCustomRangeOpen] = useState(false)
+  const [customRangeValue, setCustomRangeValue] = useState<{ start: DateValue; end: DateValue } | null>(null)
+
+  const formatDate = (d: DateValue) =>
+    d.toDate(getLocalTimeZone()).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
 
   const toggleDraftStatus = (status: Status) =>
     setDraftFilters((f) => ({
@@ -584,7 +592,22 @@ export default function ArticlesPage() {
 
             {/* Desktop: Filters + Columns */}
             {isSmUp ? (
-              <div className="flex items-center gap-2">
+              <div className="relative flex items-center gap-2">
+                {/* Invisible anchor for the custom date-range picker — positoned at the leading edge so the popover appears near the Filters button */}
+                <div className="absolute left-0 top-0 overflow-visible">
+                  <DateRangePicker
+                    isOpen={customRangeOpen}
+                    onOpenChange={(open) => { if (!open) setCustomRangeOpen(false) }}
+                    value={customRangeValue ?? undefined}
+                    onChange={(v) => setCustomRangeValue(v)}
+                    onApply={() => {
+                      setFilters({ ...draftFilters, datePreset: "Custom range", customDateRange: customRangeValue })
+                      setCustomRangeOpen(false)
+                    }}
+                    onCancel={() => setCustomRangeOpen(false)}
+                    triggerClassName="sr-only"
+                  />
+                </div>
                 {/* ── Filters dropdown ── */}
                 <Dropdown.Root isOpen={filtersOpen} onOpenChange={(o) => { if (o) openFilters(); else setFiltersOpen(false) }}>
                   <Button color="secondary" size="md" iconLeading={FilterLines}>
@@ -705,7 +728,16 @@ export default function ArticlesPage() {
                               <button
                                 key={preset}
                                 type="button"
-                                onClick={() => setDraftFilters((f) => ({ ...f, datePreset: f.datePreset === preset ? "" : preset }))}
+                                onClick={() => {
+                                  if (isCustom) {
+                                    // Open the full date-range picker; Apply will commit draft + custom range
+                                    setCustomRangeValue(draftFilters.customDateRange ?? null)
+                                    setFiltersOpen(false)
+                                    setCustomRangeOpen(true)
+                                  } else {
+                                    setDraftFilters((f) => ({ ...f, datePreset: f.datePreset === preset ? "" : preset, customDateRange: null }))
+                                  }
+                                }}
                                 className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm hover:bg-primary_hover"
                               >
                                 <span className={isCustom ? "font-semibold text-brand-600" : "text-secondary"}>{preset}</span>
@@ -829,7 +861,13 @@ export default function ArticlesPage() {
                 />
               ) : null}
 
-              {filters.datePreset ? (
+              {filters.datePreset === "Custom range" && filters.customDateRange ? (
+                <FilterChip
+                  prefix="Date: "
+                  value={`${formatDate(filters.customDateRange.start)} – ${formatDate(filters.customDateRange.end)}`}
+                  onRemove={() => setFilters((f) => ({ ...f, datePreset: "", customDateRange: null }))}
+                />
+              ) : filters.datePreset ? (
                 <FilterChip
                   prefix="Date:"
                   value={filters.datePreset}
