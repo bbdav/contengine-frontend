@@ -74,10 +74,6 @@ const LANGUAGES: Language[] = [
   { code: "es", label: "Español", flag: "ES" },
 ]
 
-const makeFlagIcon = (flag: Language["flag"]) =>
-  function FlagIcon({ className }: { className?: string }) {
-    return <img src={`https://www.untitledui.com/images/flags/${flag}.svg`} alt={`${flag} flag`} className={className ?? "size-4 rounded-full"} />
-  }
 
 const InReviewIcon = ({ className }: { className?: string }) => <CircleHalf className={className} weight="fill" />
 const ReadyToPublishIcon = ({ className }: { className?: string }) => <RocketLaunch className={className} weight="fill" />
@@ -759,7 +755,7 @@ export default function ArticlesPage() {
                         color="tertiary"
                         size="sm"
                         iconLeading={XClose}
-                        onPress={clearDraftFilters}
+                        onClick={clearDraftFilters}
                       >
                         Clear all
                       </Button>
@@ -767,7 +763,7 @@ export default function ArticlesPage() {
                         color="primary"
                         size="sm"
                         iconLeading={Check}
-                        onPress={applyFilters}
+                        onClick={applyFilters}
                       >
                         Apply
                       </Button>
