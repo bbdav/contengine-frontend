@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { endOfMonth, getLocalTimeZone, startOfMonth, today } from "@internationalized/date"
 import { useHotkeys } from "react-hotkeys-hook"
 import type { SortDescriptor } from "react-aria-components"
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Columns03, FilterLines, SearchLg } from "@untitledui/icons"
+import { ArrowLeft, ArrowRight, Calendar, Check, ChevronDown, ChevronRight, Columns03, FilterLines, Flag01, SearchLg, Translate01, UserEdit, XClose } from "@untitledui/icons"
 import { CheckCircle, CircleDashed, CircleHalf, HighlighterCircle, RocketLaunch } from "@phosphor-icons/react"
 
 import { Breadcrumbs } from "@/components/application/breadcrumbs/breadcrumbs"
@@ -53,8 +53,6 @@ const makeCheckedIcon = (checked: boolean) =>
   }
 
 function TruncatedText({ text, className }: { text: string; className: string }) {
-  // We always provide a tooltip with the full text.
-  // This is more reliable than trying to detect CSS line-clamp truncation at runtime.
   return (
     <Tooltip title={text} placement="top" trigger="hover">
       <TooltipTrigger className="block w-full text-left">
@@ -105,6 +103,58 @@ function StatusPill({ status }: { status: Status }) {
   )
 }
 
+// ── Active filter chips ──────────────────────────────────────────────────────
+
+type FilterState = {
+  statuses: Status[]
+  authors: string[]
+  language: Language | null
+  datePreset: string
+}
+
+function FilterChip({
+  prefix,
+  value,
+  icon,
+  onRemove,
+}: {
+  prefix?: string
+  value: string
+  icon?: React.ReactNode
+  onRemove: () => void
+}) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-sm border border-gray-200 bg-gray-50 py-0.5 pl-2 pr-1 text-sm text-gray-700">
+      {icon ? <span className="mr-1 shrink-0">{icon}</span> : null}
+      {prefix ? <span className="opacity-70">{prefix}</span> : null}
+      <span className="font-medium">{value}</span>
+      <button
+        type="button"
+        onClick={onRemove}
+        className="ml-0.5 rounded p-0.5 hover:bg-gray-100"
+        aria-label="Remove filter"
+      >
+        <XClose className="size-3" />
+      </button>
+    </div>
+  )
+}
+
+const ALL_STATUSES: Status[] = ["Draft", "In Review", "Ready to Publish", "Published", "Revision required"]
+const ALL_AUTHORS = ["Olivia Rhye", "Kate Morrison", "Drew Cano"]
+const DATE_PRESETS = [
+  "Today",
+  "This week",
+  "Last 7 days",
+  "This month",
+  "Last 30 days",
+  "Last 90 days",
+  "This year",
+  "Custom range",
+]
+
+// ────────────────────────────────────────────────────────────────────────────
+
 export default function ArticlesPage() {
   const isSmUp = useBreakpoint("sm")
   const thisMonthRange = useMemo(() => {
@@ -154,10 +204,64 @@ export default function ArticlesPage() {
       window.removeEventListener("resize", update)
     }
   }, [])
+
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set(["3"]))
   const [page, setPage] = useState(1)
-  const [language, setLanguage] = useState<Language>(LANGUAGES[0])
   const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({ column: "updated", direction: "descending" })
+
+  const [filters, setFilters] = useState<FilterState>({
+    statuses: ["Published", "Draft", "In Review"],
+    authors: ["Olivia Rhye", "Kate Morrison"],
+    language: LANGUAGES[0],
+    datePreset: "Last 90 days",
+  })
+
+  const filterCount =
+    filters.statuses.length +
+    filters.authors.length +
+    (filters.language ? 1 : 0) +
+    (filters.datePreset ? 1 : 0)
+
+  const clearAllFilters = () =>
+    setFilters({ statuses: [], authors: [], language: null, datePreset: "" })
+
+  // Draft filters – staged while the panel is open, committed on "Apply"
+  const [draftFilters, setDraftFilters] = useState<FilterState>(filters)
+  const [filtersOpen, setFiltersOpen] = useState(false)
+
+  const openFilters = () => {
+    setDraftFilters(filters)
+    setFiltersOpen(true)
+  }
+  const applyFilters = () => {
+    setFilters(draftFilters)
+    setFiltersOpen(false)
+  }
+  const clearDraftFilters = () => {
+    setDraftFilters({ statuses: [], authors: [], language: null, datePreset: "" })
+  }
+
+  const toggleDraftStatus = (status: Status) =>
+    setDraftFilters((f) => ({
+      ...f,
+      statuses: f.statuses.includes(status)
+        ? f.statuses.filter((s) => s !== status)
+        : [...f.statuses, status],
+    }))
+
+  const toggleDraftAuthor = (author: string) =>
+    setDraftFilters((f) => ({
+      ...f,
+      authors: f.authors.includes(author)
+        ? f.authors.filter((a) => a !== author)
+        : [...f.authors, author],
+    }))
+
+  const toggleDraftLanguage = (lang: Language) =>
+    setDraftFilters((f) => ({
+      ...f,
+      language: f.language?.code === lang.code ? null : lang,
+    }))
 
   const [visibleColumns, setVisibleColumns] = useState({
     author: true,
@@ -275,7 +379,6 @@ export default function ArticlesPage() {
   }, [sortDescriptor, visibleColumns])
 
   useEffect(() => {
-    // Keep state in sync so the sort indicators remain correct.
     if (
       effectiveSortDescriptor.column !== sortDescriptor.column ||
       effectiveSortDescriptor.direction !== sortDescriptor.direction
@@ -297,7 +400,6 @@ export default function ArticlesPage() {
     }
 
     const toTime = (s: string) => {
-      // Example values are like "Jan 4, 2025".
       const t = Date.parse(s)
       return Number.isFinite(t) ? t : 0
     }
@@ -336,9 +438,6 @@ export default function ArticlesPage() {
     })
   }, [filtered, effectiveSortDescriptor])
 
-  // Table selection is handled by react-aria-components.
-  // We keep `selectedKeys` controlled so we can read/use it later.
-
   return (
     <ContentPageLayout
       breadcrumbs={
@@ -372,18 +471,18 @@ export default function ArticlesPage() {
         </div>
       }
     >
-      {/* Body (right side): controls stay visible; table scrolls; pagination stays at the bottom */}
       <div ref={bodyRef} className="flex h-full flex-col">
         {/* Controls */}
         <div className="shrink-0 px-6 pt-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="w-full sm:max-w-md">
+            {/* Search */}
+            <div className="w-full sm:max-w-[420px]">
               <div className="relative">
                 <Input
                   ref={searchRef}
                   shortcut={isSmUp}
                   size="sm"
-                  placeholder="Search"
+                  placeholder="Search by title, slug, or author..."
                   icon={SearchLg}
                   value={query}
                   onChange={setQuery}
@@ -391,6 +490,7 @@ export default function ArticlesPage() {
                   inputClassName={!isSmUp ? "pr-12" : undefined}
                 />
 
+                {/* Mobile: filter popover inside search row */}
                 {!isSmUp ? (
                   <Dropdown.Root>
                     <ButtonUtility
@@ -418,7 +518,7 @@ export default function ArticlesPage() {
                               key={lang.code}
                               type="button"
                               className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left text-sm font-semibold text-secondary hover:bg-primary_hover"
-                              onClick={() => setLanguage(lang)}
+                              onClick={() => setFilters((f) => ({ ...f, language: lang }))}
                             >
                               <img
                                 src={`https://www.untitledui.com/images/flags/${lang.flag}.svg`}
@@ -482,18 +582,166 @@ export default function ArticlesPage() {
               </div>
             </div>
 
+            {/* Desktop: Filters + Columns */}
             {isSmUp ? (
               <div className="flex items-center gap-2">
-                <DateRangePicker defaultValue={thisMonthRange} triggerSize="md" />
+                {/* ── Filters dropdown ── */}
+                <Dropdown.Root isOpen={filtersOpen} onOpenChange={(o) => { if (o) openFilters(); else setFiltersOpen(false) }}>
+                  <Button color="secondary" size="md" iconLeading={FilterLines}>
+                    <span className="inline-flex items-center gap-2">
+                      Filters
+                      {filterCount > 0 ? (
+                        <Badge type="modern" size="sm" color="gray" className="py-0">
+                          {filterCount}
+                        </Badge>
+                      ) : null}
+                    </span>
+                  </Button>
 
-                <Button color="secondary" size="md" iconLeading={FilterLines}>
-                  <span className="inline-flex items-center gap-2">
-                    Filters
-                    <Badge type="modern" size="sm" color="gray" className="py-0">
-                      3
-                    </Badge>
-                  </span>
-                </Button>
+                  <Dropdown.Popover className="w-[280px] p-0">
+                    {/* Header */}
+                    <div className="border-b border-secondary px-4 py-3">
+                      <span className="text-sm font-semibold text-secondary">Adjust filters</span>
+                    </div>
+
+                    {/* Scrollable body */}
+                    <div className="max-h-[440px] overflow-y-auto">
+                      {/* STATUS */}
+                      <div className="px-4 pt-4 pb-2">
+                        <div className="mb-2 flex items-center gap-1.5">
+                          <Flag01 className="size-3.5 text-tertiary" />
+                          <span className="text-xs font-semibold uppercase tracking-wide text-tertiary">Status</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          {ALL_STATUSES.map((status) => {
+                            const checked = draftFilters.statuses.includes(status)
+                            return (
+                              <button
+                                key={status}
+                                type="button"
+                                onClick={() => toggleDraftStatus(status)}
+                                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm text-secondary hover:bg-primary_hover"
+                              >
+                                <span>{status}</span>
+                                {checked ? <Check className="size-4 text-brand-600" /> : null}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mx-4 h-px bg-border-secondary" />
+
+                      {/* AUTHOR */}
+                      <div className="px-4 pt-3 pb-2">
+                        <div className="mb-2 flex items-center gap-1.5">
+                          <UserEdit className="size-3.5 text-tertiary" />
+                          <span className="text-xs font-semibold uppercase tracking-wide text-tertiary">Author</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          {ALL_AUTHORS.map((author) => {
+                            const checked = draftFilters.authors.includes(author)
+                            return (
+                              <button
+                                key={author}
+                                type="button"
+                                onClick={() => toggleDraftAuthor(author)}
+                                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm text-secondary hover:bg-primary_hover"
+                              >
+                                <span>{author}</span>
+                                {checked ? <Check className="size-4 text-brand-600" /> : null}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mx-4 h-px bg-border-secondary" />
+
+                      {/* LANGUAGE */}
+                      <div className="px-4 pt-3 pb-2">
+                        <div className="mb-2 flex items-center gap-1.5">
+                          <Translate01 className="size-3.5 text-tertiary" />
+                          <span className="text-xs font-semibold uppercase tracking-wide text-tertiary">Language</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          {LANGUAGES.map((lang) => {
+                            const checked = draftFilters.language?.code === lang.code
+                            return (
+                              <button
+                                key={lang.code}
+                                type="button"
+                                onClick={() => toggleDraftLanguage(lang)}
+                                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm text-secondary hover:bg-primary_hover"
+                              >
+                                <span className="flex items-center gap-2">
+                                  <img
+                                    src={`https://www.untitledui.com/images/flags/${lang.flag}.svg`}
+                                    alt={lang.label}
+                                    className="size-4 rounded-full"
+                                  />
+                                  {lang.label}
+                                </span>
+                                {checked ? <Check className="size-4 text-brand-600" /> : null}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="mx-4 h-px bg-border-secondary" />
+
+                      {/* DATE RANGE */}
+                      <div className="px-4 pt-3 pb-4">
+                        <div className="mb-2 flex items-center gap-1.5">
+                          <Calendar className="size-3.5 text-tertiary" />
+                          <span className="text-xs font-semibold uppercase tracking-wide text-tertiary">Date Range</span>
+                        </div>
+                        <div className="flex flex-col gap-0.5">
+                          {DATE_PRESETS.map((preset) => {
+                            const isCustom = preset === "Custom range"
+                            const selected = draftFilters.datePreset === preset
+                            return (
+                              <button
+                                key={preset}
+                                type="button"
+                                onClick={() => setDraftFilters((f) => ({ ...f, datePreset: f.datePreset === preset ? "" : preset }))}
+                                className="flex w-full items-center justify-between rounded-md px-2 py-2 text-left text-sm hover:bg-primary_hover"
+                              >
+                                <span className={isCustom ? "font-semibold text-brand-600" : "text-secondary"}>{preset}</span>
+                                {isCustom ? (
+                                  <ChevronRight className="size-4 text-brand-600" />
+                                ) : selected ? (
+                                  <Check className="size-4 text-brand-600" />
+                                ) : null}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sticky footer */}
+                    <div className="flex items-center justify-between border-t border-secondary px-4 py-3">
+                      <Button
+                        color="tertiary"
+                        size="sm"
+                        iconLeading={XClose}
+                        onPress={clearDraftFilters}
+                      >
+                        Clear all
+                      </Button>
+                      <Button
+                        color="primary"
+                        size="sm"
+                        iconLeading={Check}
+                        onPress={applyFilters}
+                      >
+                        Apply
+                      </Button>
+                    </div>
+                  </Dropdown.Popover>
+                </Dropdown.Root>
 
                 <Dropdown.Root>
                   <ButtonUtility icon={Columns03} tooltip="Columns" size="md" />
@@ -544,32 +792,64 @@ export default function ArticlesPage() {
                     </Dropdown.Menu>
                   </Dropdown.Popover>
                 </Dropdown.Root>
-
-                <Dropdown.Root>
-                  <Button color="secondary" size="md" iconLeading={makeFlagIcon(language.flag)} iconTrailing={ChevronDown}>
-                    {language.code.toUpperCase()}
-                  </Button>
-                  <Dropdown.Popover className="w-min">
-                    <Dropdown.Menu>
-                      {LANGUAGES.map((lang) => (
-                        <Dropdown.Item
-                          key={lang.code}
-                          label={lang.label}
-                          icon={makeFlagIcon(lang.flag)}
-                          onAction={() => {
-                            setLanguage(lang)
-                          }}
-                        />
-                      ))}
-                    </Dropdown.Menu>
-                  </Dropdown.Popover>
-                </Dropdown.Root>
               </div>
             ) : null}
           </div>
+
+          {/* Active filter chips */}
+          {filterCount > 0 ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              {filters.statuses.length > 0 ? (
+                <FilterChip
+                  prefix="Status:"
+                  value={filters.statuses.join(", ")}
+                  onRemove={() => setFilters((f) => ({ ...f, statuses: [] }))}
+                />
+              ) : null}
+
+              {filters.authors.length > 0 ? (
+                <FilterChip
+                  prefix="Author:"
+                  value={filters.authors.join(", ")}
+                  onRemove={() => setFilters((f) => ({ ...f, authors: [] }))}
+                />
+              ) : null}
+
+              {filters.language ? (
+                <FilterChip
+                  icon={
+                    <img
+                      src={`https://www.untitledui.com/images/flags/${filters.language.flag}.svg`}
+                      alt={filters.language.label}
+                      className="size-4 rounded-full"
+                    />
+                  }
+                  value={filters.language.label}
+                  onRemove={() => setFilters((f) => ({ ...f, language: null }))}
+                />
+              ) : null}
+
+              {filters.datePreset ? (
+                <FilterChip
+                  prefix="Date:"
+                  value={filters.datePreset}
+                  onRemove={() => setFilters((f) => ({ ...f, datePreset: "" }))}
+                />
+              ) : null}
+
+              <button
+                type="button"
+                onClick={clearAllFilters}
+                className="flex items-center gap-1.5 text-sm font-semibold text-gray-600 hover:text-gray-900"
+              >
+                <XClose className="size-5" />
+                Clear all
+              </button>
+            </div>
+          ) : null}
         </div>
 
-        {/* Table (scrolls only if it would collide with pagination) */}
+        {/* Table */}
         <div className="mt-4 px-6">
           <div className="overflow-hidden rounded-lg bg-primary shadow-xs ring-1 ring-secondary">
             <div ref={tableScrollRef} style={{ maxHeight: tableMaxHeight }} className="overflow-auto">
@@ -581,7 +861,6 @@ export default function ArticlesPage() {
                 onSortChange={setSortDescriptor}
                 selectedKeys={selectedKeys}
                 onSelectionChange={(keys) => {
-                  // react-aria can pass "all" or a Set.
                   if (keys === "all") {
                     setSelectedKeys(new Set(sorted.map((r) => r.id)))
                   } else {
@@ -654,6 +933,7 @@ export default function ArticlesPage() {
                             <Dropdown.Menu>
                               <Dropdown.Item label="Edit">Edit</Dropdown.Item>
                               <Dropdown.Item label="Duplicate">Duplicate</Dropdown.Item>
+                              <Dropdown.Item label="Preview">Preview</Dropdown.Item>
                               <Dropdown.Item label="Delete">Delete</Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown.Popover>
@@ -667,61 +947,61 @@ export default function ArticlesPage() {
           </div>
         </div>
 
-      {/* Pagination bar */}
-      <div ref={paginationRef} className="shrink-0 mt-auto border-t border-secondary bg-primary">
-        <div className="px-6 py-3">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="-mx-1 w-full overflow-x-auto px-1 pb-1 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:w-auto sm:overflow-visible sm:px-0 sm:pb-0">
-              <Pagination.Root page={page} total={10} onPageChange={setPage}>
-                <Pagination.Context>
-                  {({ pages }) => (
-                    <ButtonGroup size="sm" className="w-max sm:w-auto">
-                      <Pagination.PrevTrigger asChild>
-                        <ButtonGroupItem iconLeading={ArrowLeft} aria-label="Previous page" />
-                      </Pagination.PrevTrigger>
+        {/* Pagination bar */}
+        <div ref={paginationRef} className="mt-auto shrink-0 border-t border-secondary bg-primary">
+          <div className="px-6 py-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="-mx-1 w-full overflow-x-auto px-1 pb-1 [-webkit-overflow-scrolling:touch] sm:mx-0 sm:w-auto sm:overflow-visible sm:px-0 sm:pb-0">
+                <Pagination.Root page={page} total={10} onPageChange={setPage}>
+                  <Pagination.Context>
+                    {({ pages }) => (
+                      <ButtonGroup size="sm" className="w-max sm:w-auto">
+                        <Pagination.PrevTrigger asChild>
+                          <ButtonGroupItem iconLeading={ArrowLeft} aria-label="Previous page" />
+                        </Pagination.PrevTrigger>
 
-                      {pages.map((p, index) =>
-                        p.type === "page" ? (
-                          <Pagination.Item key={index} {...p} asChild>
-                            <ButtonGroupItem isSelected={p.isCurrent} className="size-9 items-center justify-center sm:size-10">
-                              {p.value}
-                            </ButtonGroupItem>
-                          </Pagination.Item>
-                        ) : (
-                          <Pagination.Ellipsis key={index}>
-                            <ButtonGroupItem className="pointer-events-none size-9 items-center justify-center rounded-none! sm:size-10">
-                              &#8230;
-                            </ButtonGroupItem>
-                          </Pagination.Ellipsis>
-                        )
-                      )}
+                        {pages.map((p, index) =>
+                          p.type === "page" ? (
+                            <Pagination.Item key={index} {...p} asChild>
+                              <ButtonGroupItem isSelected={p.isCurrent} className="size-9 items-center justify-center sm:size-10">
+                                {p.value}
+                              </ButtonGroupItem>
+                            </Pagination.Item>
+                          ) : (
+                            <Pagination.Ellipsis key={index}>
+                              <ButtonGroupItem className="pointer-events-none size-9 items-center justify-center rounded-none! sm:size-10">
+                                &#8230;
+                              </ButtonGroupItem>
+                            </Pagination.Ellipsis>
+                          )
+                        )}
 
-                      <Pagination.NextTrigger asChild>
-                        <ButtonGroupItem iconLeading={ArrowRight} aria-label="Next page" />
-                      </Pagination.NextTrigger>
-                    </ButtonGroup>
-                  )}
-                </Pagination.Context>
-              </Pagination.Root>
-            </div>
+                        <Pagination.NextTrigger asChild>
+                          <ButtonGroupItem iconLeading={ArrowRight} aria-label="Next page" />
+                        </Pagination.NextTrigger>
+                      </ButtonGroup>
+                    )}
+                  </Pagination.Context>
+                </Pagination.Root>
+              </div>
 
-            <div className="hidden sm:block">
-              <Dropdown.Root>
-                <Button color="tertiary" className="text-tertiary" iconTrailing={ChevronDown}>
-                  View 25
-                </Button>
-                <Dropdown.Popover className="w-min">
-                  <Dropdown.Menu>
-                    <Dropdown.Item label="View 10" />
-                    <Dropdown.Item label="View 25" />
-                    <Dropdown.Item label="View 50" />
-                  </Dropdown.Menu>
-                </Dropdown.Popover>
-              </Dropdown.Root>
+              <div className="hidden sm:block">
+                <Dropdown.Root>
+                  <Button color="tertiary" className="text-tertiary" iconTrailing={ChevronDown}>
+                    View 25
+                  </Button>
+                  <Dropdown.Popover className="w-min">
+                    <Dropdown.Menu>
+                      <Dropdown.Item label="View 10" />
+                      <Dropdown.Item label="View 25" />
+                      <Dropdown.Item label="View 50" />
+                    </Dropdown.Menu>
+                  </Dropdown.Popover>
+                </Dropdown.Root>
+              </div>
             </div>
           </div>
         </div>
-      </div>
       </div>
     </ContentPageLayout>
   )
